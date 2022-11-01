@@ -16,3 +16,33 @@ def index():
 def discover():
     return "DISCOVER"
 
+
+@app.route('/local')
+def local():
+    return "LOCAL MUSIC"
+
+
+@app.route('/login')
+def login():
+    return "LOGIN"
+
+
+@app.route('/register')
+def register():
+    return "REGISTER"
+
+
+@app.route('/settings')
+def settings():
+    return "SETTINGS"
+
+@app.route('/artist/<name>')
+@login_required
+def artist(name):
+    return "ARTIST PAGE"
+
+
+@app.route('/listener/<name>')
+@login_required
+def artist(name):
+    return "LISTENER PAGE"
