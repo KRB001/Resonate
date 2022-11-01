@@ -9,7 +9,7 @@ import datetime
 @app.route('/')
 @app.route('/index')
 def index():
-    return "INDEX"
+    return render_template('index.html', title="Home")
 
 
 @app.route('/discover')
@@ -24,7 +24,7 @@ def local():
 
 @app.route('/login')
 def login():
-    return "LOGIN"
+    return render_template('login.html', title="Login")
 
 
 @app.route('/register')
