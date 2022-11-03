@@ -44,5 +44,5 @@ def artist(name):
 
 @app.route('/listener/<name>')
 @login_required
-def artist(name):
+def listener(name):
     return "LISTENER PAGE"
