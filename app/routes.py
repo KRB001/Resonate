@@ -46,3 +46,14 @@ def artist(name):
 @login_required
 def listener(name):
     return "LISTENER PAGE"
+
+@app.route('/resetDB')
+def resetDB():
+    reset_db()
+    return "DB RESET"
+
+def reset_db():
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        print('Clear table {}'.format(table))
+        db.session.execute(table.delete())
