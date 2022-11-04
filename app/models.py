@@ -53,7 +53,6 @@ class Artist(User, db.Model):
     albums = db.relationship('ArtistToAlbum', backref='featured_artist', lazy='dynamic')
     songs = db.relationship('ArtistToSong', backref='song_creator', lazy='dynamic')
     frequent_viewers = db.relationship('ArtistToListener', backref='visited_artist', lazy='dynamic')
-
     def __repr__(self):
         return '<Artist {}>'.format(self.username)
 
