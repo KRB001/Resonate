@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True)
     pw_hash = db.Column(db.String(128))
     display_name = db.Column(db.String(100), index=True)
-    join_date = db.Column(db.DateTime)
+    joining_date = db.Column(db.DateTime)
     profile_public = db.Column(db.Boolean)
     following_public = db.Column(db.Boolean)
     # other settings for any account type go here
