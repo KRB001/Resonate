@@ -47,12 +47,57 @@ def artist(name):
 def listener(name):
     return "LISTENER PAGE"
 
-@app.route('/resetDB')
-def resetDB():
+@app.route('/reset_db')
+def reset_db():
 
     reset_db()
 
     return "DB RESET"
+
+@app.route('/populate_db')
+def populate_db():
+
+    reset_db()
+
+    now = datetime.datetime.now()
+
+    user1 = Listener(username="user1", email="user1@resonate.net",
+                     display_name="User 1", join_date=now
+                     )
+    user1.set_password("password1")
+
+    user2 = Listener(username="user2", email="user2@resonate.net",
+                     display_name="User 2", join_date=now
+                     )
+    user2.set_password("password2")
+
+    user3 = Artist(username="user3", email="user3@resonate.net",
+                     display_name="The Cool Band", join_date=now,
+                   location="Ithaca, NY")
+    user3.set_password("password3")
+
+    user4 = Artist(username="user4", email="user4@resonate.net",
+                   display_name="The Very Cool Band", join_date=now,
+                   location="Hell, MI")
+    user4.set_password("password4")
+
+    db.session.add_all([user1, user2, user3, user4])
+    db.session.commit()
+
+
+
+    genre1 = Genre(name="Pop")
+    genre2 = Genre(name="Electronica")
+    genre3 = Genre(name="Folk")
+    genre4 = Genre(name="Rock")
+    genre5 = Genre(name="Soundtrack")
+
+    db.session.add_all([genre1, genre2, genre3, genre4, genre5])
+    db.session.commit()
+
+
+
+    return "DB POPULATED"
 
 def reset_db():
     meta = db.metadata

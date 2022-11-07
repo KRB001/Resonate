@@ -14,8 +14,10 @@ class User(UserMixin, db.Model):
     following_public = db.Column(db.Boolean)
     # other settings for any account type go here
 
-    followers = db.relationship('Follows', backref='followed_account', lazy='dynamic')
-    followed_accounts = db.relationship('Follows', backref='follower', lazy='dynamic')
+    followers = db.relationship('Follows', lazy='dynamic',
+                                primaryjoin="or_(User.id == Follows.followed_id, User.id == Follows.follower_id)")
+    #followed_accounts = db.relationship('Follows', backref='follower', lazy='dynamic',
+                                #primaryjoin="or_(User.id == Follows.follower_id, User.id == Follows.followed_id)")
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
 
@@ -27,9 +29,6 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
-    
-    def print_hi():
-        print("hi")
 
 @login.user_loader
 def load_user(id):
@@ -50,8 +49,12 @@ class Artist(User, db.Model):
     location = db.Column(db.String(200), index=True)
     # other artist only settings/info goes here
 
-    similar = db.relationship('SimilarArtist', backref='artist_account', lazy='dynamic')
-    referenced_similar = db.relationship('SimilarArtist', backref='artist_referenced', lazy='dynamic')
+    similar = db.relationship('SimilarArtist', backref='artist_account', lazy='dynamic',
+                              primaryjoin="or_(Artist.id == SimilarArtist.account_id, Artist.id == "
+                                          "SimilarArtist.similar_id)")
+    #referenced_similar = db.relationship('SimilarArtist', backref='artist_referenced', lazy='dynamic',
+                                         #primaryjoin="or_(Artist.id == SimilarArtist.similar_id, Artist.id == "
+                                                     #"SimilarArtist.account_id)")
     genres = db.relationship('ArtistGenre', backref='artist', lazy='dynamic')
     albums = db.relationship('ArtistToAlbum', backref='featured_artist', lazy='dynamic')
     songs = db.relationship('ArtistToSong', backref='song_creator', lazy='dynamic')
@@ -118,6 +121,7 @@ class Follows(db.Model):
     followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
+
 class ArtistGenre(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
@@ -141,6 +145,7 @@ class ListenerToGenre(db.Model):
     listener_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=False)
     page_visit_count = db.Column(db.Integer)
+
 
 class ArtistToAlbum(db.Model):
     id = db.Column(db.Integer, primary_key=True)
