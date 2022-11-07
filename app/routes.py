@@ -49,7 +49,9 @@ def listener(name):
 
 @app.route('/resetDB')
 def resetDB():
+
     reset_db()
+
     return "DB RESET"
 
 def reset_db():
