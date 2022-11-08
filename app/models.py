@@ -1,10 +1,21 @@
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from sqlalchemy.orm import sessionmaker, relationship, joinedload
+from sqlalchemy import Table, Column, create_engine, MetaData
+from sqlalchemy.ext.declarative import declarative_base
 
 
-class User(UserMixin, db.Model):
+engine = create_engine('sqlite:///:memory:', echo=True)
+Session = sessionmaker(bind=engine)
+session = Session()
+Base = declarative_base(bind=engine)
+meta = MetaData()
+
+
+class User(UserMixin, db.Model, Base):
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
     username = db.Column(db.String(100), index=True, unique=True)
     email = db.Column(db.String(120), unique=True)
     pw_hash = db.Column(db.String(128))
@@ -14,12 +25,20 @@ class User(UserMixin, db.Model):
     following_public = db.Column(db.Boolean)
     # other settings for any account type go here
 
-    followers = db.relationship('Follows', lazy='dynamic',
-                                primaryjoin="or_(User.id == Follows.followed_id, User.id == Follows.follower_id)")
-    #followed_accounts = db.relationship('Follows', backref='follower', lazy='dynamic',
-                                #primaryjoin="or_(User.id == Follows.follower_id, User.id == Follows.followed_id)")
+    following = relationship(
+        'User', lambda: user_following,
+        primaryjoin=lambda: User.id == user_following.c.follower_id,
+        secondaryjoin=lambda: User.id == user_following.c.followed_id,
+        backref="followers"
+    )
+
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+        "polymorphic_on": type
+    }
 
     def set_password(self, password):
         self.pw_hash = generate_password_hash(password)
@@ -38,6 +57,11 @@ def load_user(id):
 class Listener(User, db.Model):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     # listener only settings/info goes here
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'listener',
+        'with_polymorphic': '*'
+    }
 
     def __repr__(self):
         return '<Listener {}>'.format(self.username)
@@ -59,6 +83,12 @@ class Artist(User, db.Model):
     albums = db.relationship('ArtistToAlbum', backref='featured_artist', lazy='dynamic')
     songs = db.relationship('ArtistToSong', backref='song_creator', lazy='dynamic')
     frequent_viewers = db.relationship('ArtistToListener', backref='visited_artist', lazy='dynamic')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'artist',
+        'with_polymorphic': '*'
+    }
+
     def __repr__(self):
         return '<Artist {}>'.format(self.username)
 
@@ -115,11 +145,18 @@ class Song(db.Model):
     def __repr__(self):
         return '<Song {}>'.format(self.name)
 
+
 class Follows(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
 
+
+user_following = db.Table(
+    "user_following", Base.metadata,
+    db.Column("follower_id", db.Integer, db.ForeignKey(User.id), primary_key=True),
+    db.Column("followed_id", db.Integer, db.ForeignKey(User.id), primary_key=True),
+)
 
 
 class ArtistGenre(db.Model):

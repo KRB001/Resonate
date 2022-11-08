@@ -59,6 +59,8 @@ def populate_db():
 
     reset_db()
 
+    db.create_all()
+
     now = datetime.datetime.now()
 
     user1 = Listener(username="user1", email="user1@resonate.net",
@@ -72,19 +74,20 @@ def populate_db():
     user2.set_password("password2")
 
     user3 = Artist(username="user3", email="user3@resonate.net",
-                     display_name="The Cool Band", join_date=now,
+                   display_name="The Cool Band", join_date=now,
                    location="Ithaca, NY")
     user3.set_password("password3")
 
     user4 = Artist(username="user4", email="user4@resonate.net",
                    display_name="The Very Cool Band", join_date=now,
-                   location="Hell, MI")
+                   location="Hell, MI", followers=[user1])
     user4.set_password("password4")
 
     db.session.add_all([user1, user2, user3, user4])
     db.session.commit()
 
 
+    db.session.commit()
 
     genre1 = Genre(name="Pop")
     genre2 = Genre(name="Electronica")

@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a36dbd6c9ff5
+Revision ID: 4c21424428ec
 Revises: 
-Create Date: 2022-11-03 11:06:11.921019
+Create Date: 2022-11-07 19:32:38.773475
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a36dbd6c9ff5'
+revision = '4c21424428ec'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,6 +44,7 @@ def upgrade():
     op.create_index(op.f('ix_song_release_date'), 'song', ['release_date'], unique=False)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('type', sa.String(length=50), nullable=True),
     sa.Column('username', sa.String(length=100), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('pw_hash', sa.String(length=128), nullable=True),
@@ -69,7 +70,7 @@ def upgrade():
     sa.Column('followed_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['followed_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['follower_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id', 'follower_id', 'followed_id')
     )
     op.create_table('listener',
     sa.Column('id', sa.Integer(), nullable=False),
