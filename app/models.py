@@ -1,9 +1,6 @@
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from sqlalchemy.orm import sessionmaker, relationship, joinedload
-from sqlalchemy import Table, Column, create_engine, MetaData
-from sqlalchemy.ext.declarative import declarative_base
 
 followers = db.Table('followers',
                      db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -77,18 +74,23 @@ class Listener(User, db.Model):
         return '<Listener {}>'.format(self.username)
 
 
+similar_artists = db.Table('similar_artists',
+                           db.Column('referenced_artist_id', db.Integer, db.ForeignKey('artist.id')),
+                           db.Column('similar_artist_id', db.Integer, db.ForeignKey('artist.id'))
+)
+
 
 class Artist(User, db.Model):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     location = db.Column(db.String(200), index=True)
     # other artist only settings/info goes here
 
-    similar = db.relationship('SimilarArtist', backref='artist_account', lazy='dynamic',
-                              primaryjoin="or_(Artist.id == SimilarArtist.account_id, Artist.id == "
-                                          "SimilarArtist.similar_id)")
-    #referenced_similar = db.relationship('SimilarArtist', backref='artist_referenced', lazy='dynamic',
-                                         #primaryjoin="or_(Artist.id == SimilarArtist.similar_id, Artist.id == "
-                                                     #"SimilarArtist.account_id)")
+    similar = db.relationship(
+        'Artist', secondary=similar_artists,
+        primaryjoin=(similar_artists.c.referenced_artist_id == id),
+        secondaryjoin=(similar_artists.c.similar_artist_id == id),
+        backref=db.backref('similar_to', lazy='dynamic'), lazy='dynamic')
+
     genres = db.relationship('ArtistGenre', backref='artist', lazy='dynamic')
     albums = db.relationship('ArtistToAlbum', backref='featured_artist', lazy='dynamic')
     songs = db.relationship('ArtistToSong', backref='song_creator', lazy='dynamic')
@@ -98,6 +100,18 @@ class Artist(User, db.Model):
         'polymorphic_identity': 'artist',
         'with_polymorphic': '*'
     }
+
+    def add_similar(self, artist):
+        if not self.is_similar(artist):
+            self.similar.append(artist)
+
+    def remove_similar(self, artist):
+        if self.is_similar(artist):
+            self.similar.remove(artist)
+
+    def is_similar(self, artist):
+        return self.similar.filter(
+            similar_artists.c.similar_artist_id == artist.id).count() > 0
 
     def __repr__(self):
         return '<Artist {}>'.format(self.username)

@@ -57,12 +57,13 @@ def reset_db():
 @app.route('/populate_db')
 def populate_db():
 
+    # reset the DB
     reset_db()
 
-    db.create_all()
-
+    # local datetime.now var for setting join dates
     now = datetime.datetime.now()
 
+    # declare users
     user1 = Listener(username="user1", email="user1@resonate.net",
                      display_name="User 1", join_date=now
                      )
@@ -83,17 +84,19 @@ def populate_db():
                    location="Hell, MI")
     user4.set_password("password4")
 
-    user5 = User(username="user5", email="user5@resonate.net",
-                 display_name="Test User 1", join_date=now)
+    user5 = Artist(username="user5", email="user5@resonate.net",
+                   display_name="User 5", join_date=now,
+                   location="Antarctica")
     user5.set_password("password5")
 
-    user6 = User(username="user6", email="user6@resonate.net",
-                 display_name="Test User 6", join_date=now)
-    user6.set_password("password6")
+    user6 = Listener(username="krb", email="krb@krb.net",
+                     display_name="KRB", join_date=now)
+    user6.set_password("krb")
 
     db.session.add_all([user1, user2, user3, user4, user5, user6])
     db.session.commit()
 
+    # declare genres
     genre1 = Genre(name="Pop")
     genre2 = Genre(name="Electronica")
     genre3 = Genre(name="Folk")
@@ -103,9 +106,13 @@ def populate_db():
     db.session.add_all([genre1, genre2, genre3, genre4, genre5])
     db.session.commit()
 
-    return "DB POPULATED"
+    # flash message / return to index
+    flash('Populated database with default data')
+    return render_template('index.html', title='Populated')
+
 
 def reset_db():
+    # resets db (surprising right?)
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
         print('Clear table {}'.format(table))
