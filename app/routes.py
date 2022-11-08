@@ -63,6 +63,22 @@ def populate_db():
     # local datetime.now var for setting join dates
     now = datetime.datetime.now()
 
+    # declare genres
+    genre1 = Genre(name="Pop")
+    genre2 = Genre(name="Electronica")
+    genre3 = Genre(name="Folk")
+    genre4 = Genre(name="Rock")
+    genre5 = Genre(name="Soundtrack")
+    genre6 = Genre(name="Classical")
+    genre7 = Genre(name="World")
+    genre8 = Genre(name="Rap")
+    genre9 = Genre(name="R&B")
+    genre10 = Genre(name="Country")
+
+    db.session.add_all([genre1, genre2, genre3, genre4, genre5,
+                        genre6, genre7, genre8, genre9, genre10])
+    db.session.commit()
+
     # declare users
     user1 = Listener(username="user1", email="user1@resonate.net",
                      display_name="User 1", join_date=now
@@ -96,14 +112,106 @@ def populate_db():
     db.session.add_all([user1, user2, user3, user4, user5, user6])
     db.session.commit()
 
-    # declare genres
-    genre1 = Genre(name="Pop")
-    genre2 = Genre(name="Electronica")
-    genre3 = Genre(name="Folk")
-    genre4 = Genre(name="Rock")
-    genre5 = Genre(name="Soundtrack")
+    # declare artist genres
+    ag1 = ArtistGenre(artist_id=user3.id, genre_id=genre1.id)
+    ag2 = ArtistGenre(artist_id=user3.id, genre_id=genre2.id)
+    ag3 = ArtistGenre(artist_id=user4.id, genre_id=genre10.id)
+    ag4 = ArtistGenre(artist_id=user4.id, genre_id=genre9.id)
+    ag5 = ArtistGenre(artist_id=user5.id, genre_id=genre5.id)
+    ag6 = ArtistGenre(artist_id=user5.id, genre_id=genre6.id)
+    ag7 = ArtistGenre(artist_id=user5.id, genre_id=genre7.id)
 
-    db.session.add_all([genre1, genre2, genre3, genre4, genre5])
+    db.session.add_all([ag1, ag2, ag3, ag4, ag5, ag6, ag7])
+    db.session.commit()
+
+    # declare user frequent artists
+    atl1 = ArtistToListener(listener_id=user1.id,artist_id=user3.id,page_visit_count=50)
+    atl2 = ArtistToListener(listener_id=user1.id, artist_id=user4.id, page_visit_count=100)
+    atl3 = ArtistToListener(listener_id=user1.id, artist_id=user5.id, page_visit_count=150)
+    atl4 = ArtistToListener(listener_id=user2.id, artist_id=user4.id, page_visit_count=500)
+    atl5 = ArtistToListener(listener_id=user6.id, artist_id=user3.id, page_visit_count=100)
+    atl6 = ArtistToListener(listener_id=user6.id, artist_id=user5.id, page_visit_count=120)
+    atl7 = ArtistToListener(listener_id=user3.id, artist_id=user5.id, page_visit_count=50)
+    atl8 = ArtistToListener(listener_id=user4.id, artist_id=user3.id, page_visit_count=200)
+
+    db.session.add_all([atl1, atl2, atl3, atl4, atl5, atl6, atl7, atl8])
+    db.session.commit()
+
+    # declare user frequent genres
+    ltg1 = ListenerToGenre(listener_id=user1.id, genre_id=genre1.id, page_visit_count=80)
+    ltg2 = ListenerToGenre(listener_id=user1.id, genre_id=genre8.id, page_visit_count=200)
+    ltg3 = ListenerToGenre(listener_id=user2.id, genre_id=genre7.id, page_visit_count=700)
+    ltg4 = ListenerToGenre(listener_id=user2.id, genre_id=genre6.id, page_visit_count=150)
+    ltg5 = ListenerToGenre(listener_id=user2.id, genre_id=genre3.id, page_visit_count=200)
+    ltg6 = ListenerToGenre(listener_id=user3.id, genre_id=genre5.id, page_visit_count=400)
+    ltg7 = ListenerToGenre(listener_id=user4.id, genre_id=genre2.id, page_visit_count=250)
+    ltg8 = ListenerToGenre(listener_id=user4.id, genre_id=genre10.id, page_visit_count=60)
+    ltg9 = ListenerToGenre(listener_id=user5.id, genre_id=genre4.id, page_visit_count=900)
+    ltg10 = ListenerToGenre(listener_id=user6.id, genre_id=genre2.id, page_visit_count=200)
+    ltg11 = ListenerToGenre(listener_id=user6.id, genre_id=genre3.id, page_visit_count=140)
+    ltg12 = ListenerToGenre(listener_id=user6.id, genre_id=genre4.id, page_visit_count=70)
+
+    db.session.add_all([ltg1, ltg2, ltg3, ltg4, ltg5, ltg6,
+                        ltg7, ltg8, ltg9, ltg10, ltg11, ltg12])
+    db.session.commit()
+
+    # declare posts
+    post1 = Post(poster_id=user1.id,title="This is a cool post",
+                 text="I don't have too much to say but yea this is definitely"
+                      "one of the posts ever. Definitely.",
+                 time_posted=now)
+    post2 = Post(poster_id=user3.id, title="Guys I just made a post",
+                 text="I think you're reading it right now, but I might be"
+                      "entirely wrong. Might wanna check up on that at some"
+                      "point, but I can't tell you what to do or anything.",
+                 time_posted=now)
+    post3 = Post(poster_id=user3.id, title="Stuff I forgot to say in my last post",
+                 text="Okay I'll be honest there wasn't actually anything I"
+                      "forgot to say I just wanted to make another post.",
+                 time_posted=now)
+    post4 = Post(poster_id=user5.id, title="I'm running out of post titles",
+                 text="I've written like four of these things by now. That's like,"
+                      "more than 3. Geez.",
+                 time_posted=now)
+    post5 = Post(poster_id=user6.id, title="This is the last post!",
+                 text="Finally, at long last, I've reached the end of my long"
+                      "posting journey. I shall post no more and soon I will"
+                      "be at rest.",
+                 time_posted=now)
+    post6 = Post(poster_id=user6.id, title=":)",
+                 text="ok I lied about that being my last post",
+                 time_posted=now)
+
+    db.session.add_all([post1, post2, post3, post4, post5, post6])
+    db.session.commit()
+
+    # declare comments
+    comment1 = Comment(post_id=post2.id, poster_id=user2.id,
+                       text="that's so cool", time_posted=now)
+    comment2 = Comment(post_id=post3.id, poster_id=user4.id,
+                       text="it's okay we all make mistakes sometimes", time_posted=now)
+    comment3 = Comment(post_id=post6.id, poster_id=user1.id,
+                       text="I am very upset and infuriated", time_posted=now)
+    comment4 = Comment(post_id=post6.id, poster_id=user5.id,
+                       text="ok rude", time_posted=now)
+
+    db.session.add_all([comment1, comment2, comment3, comment4])
+    db.session.commit()
+
+    # make some users follow eachother
+    user1.follow(user3)
+    user1.follow(user4)
+    user1.follow(user6)
+    user2.follow(user5)
+    user2.follow(user1)
+    user3.follow(user2)
+    user3.follow(user4)
+    user4.follow(user6)
+    user5.follow(user2)
+    user5.follow(user4)
+    user5.follow(user1)
+    user6.follow(user2)
+
     db.session.commit()
 
     # flash message / return to index
@@ -115,5 +223,5 @@ def reset_db():
     # resets db (surprising right?)
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
-        print('Clear table {}'.format(table))
+        print('Cleared table {}'.format(table))
         db.session.execute(table.delete())
