@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 4c21424428ec
+Revision ID: a0acf8ff07d0
 Revises: 
-Create Date: 2022-11-07 19:32:38.773475
+Create Date: 2022-11-08 12:21:39.166730
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4c21424428ec'
+revision = 'a0acf8ff07d0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -64,13 +64,11 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_artist_location'), 'artist', ['location'], unique=False)
-    op.create_table('follows',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('follower_id', sa.Integer(), nullable=False),
-    sa.Column('followed_id', sa.Integer(), nullable=False),
+    op.create_table('followers',
+    sa.Column('follower_id', sa.Integer(), nullable=True),
+    sa.Column('followed_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['followed_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['follower_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id', 'follower_id', 'followed_id')
+    sa.ForeignKeyConstraint(['follower_id'], ['user.id'], )
     )
     op.create_table('listener',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -179,7 +177,7 @@ def downgrade():
     op.drop_table('post')
     op.drop_table('listener_to_genre')
     op.drop_table('listener')
-    op.drop_table('follows')
+    op.drop_table('followers')
     op.drop_index(op.f('ix_artist_location'), table_name='artist')
     op.drop_table('artist')
     op.drop_index(op.f('ix_user_username'), table_name='user')

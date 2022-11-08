@@ -5,15 +5,12 @@ from sqlalchemy.orm import sessionmaker, relationship, joinedload
 from sqlalchemy import Table, Column, create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
+followers = db.Table('followers',
+                     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+                     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
 
-engine = create_engine('sqlite:///:memory:', echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
-Base = declarative_base(bind=engine)
-meta = MetaData()
-
-
-class User(UserMixin, db.Model, Base):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(50))
     username = db.Column(db.String(100), index=True, unique=True)
@@ -25,12 +22,11 @@ class User(UserMixin, db.Model, Base):
     following_public = db.Column(db.Boolean)
     # other settings for any account type go here
 
-    following = relationship(
-        'User', lambda: user_following,
-        primaryjoin=lambda: User.id == user_following.c.follower_id,
-        secondaryjoin=lambda: User.id == user_following.c.followed_id,
-        backref="followers"
-    )
+    followed = db.relationship(
+        'User', secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
 
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
@@ -46,8 +42,22 @@ class User(UserMixin, db.Model, Base):
     def check_password(self, password):
         return check_password_hash(self.pw_hash, password)
 
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
 
 @login.user_loader
 def load_user(id):
@@ -146,17 +156,7 @@ class Song(db.Model):
         return '<Song {}>'.format(self.name)
 
 
-class Follows(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
 
-
-user_following = db.Table(
-    "user_following", Base.metadata,
-    db.Column("follower_id", db.Integer, db.ForeignKey(User.id), primary_key=True),
-    db.Column("followed_id", db.Integer, db.ForeignKey(User.id), primary_key=True),
-)
 
 
 class ArtistGenre(db.Model):
