@@ -14,8 +14,6 @@ class User(UserMixin, db.Model):
     following_public = db.Column(db.Boolean)
     # other settings for any account type go here
 
-    followers = db.relationship('Follows', backref='followed_account', lazy='dynamic')
-    followed_accounts = db.relationship('Follows', backref='follower', lazy='dynamic')
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
 
@@ -50,8 +48,6 @@ class Artist(User, db.Model):
     location = db.Column(db.String(200), index=True)
     # other artist only settings/info goes here
 
-    similar = db.relationship('SimilarArtist', backref='artist_account', lazy='dynamic')
-    referenced_similar = db.relationship('SimilarArtist', backref='artist_referenced', lazy='dynamic')
     genres = db.relationship('ArtistGenre', backref='artist', lazy='dynamic')
     albums = db.relationship('ArtistToAlbum', backref='featured_artist', lazy='dynamic')
     songs = db.relationship('ArtistToSong', backref='song_creator', lazy='dynamic')
