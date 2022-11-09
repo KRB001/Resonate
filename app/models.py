@@ -178,11 +178,6 @@ class ArtistGenre(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
     genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=False)
 
-class SimilarArtist(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-    similar_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-
 class ArtistToListener(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # this is left as generic user so artists can get recs for other artists
