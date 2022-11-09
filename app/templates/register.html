@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Register</h1>
+
+<p1> Resonate boasts different features for fans and artists. Click
+     below to choose your account type!</p1>
+
+<b><h3> I am a....</h3></b>
+
+    <h4><a href="{{ url_for('register_listener')}}">Listener</a></h4>
+
+    <h4><a href="{{ url_for('register_artist') }}">Artist</a></h4>
+
+{% endblock %}
