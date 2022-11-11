@@ -12,9 +12,16 @@
             RESONATE:
             <a href="{{ url_for('index') }}">Home</a>
             {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('login') }}">Login</a>
             {% else %}
-            <a href="{{ url_for('logout') }}">Logout</a>
+                {% if current_user.type == "listener" %}
+                    <a href="/listener/{{ current_user.username }}">My Page</a>
+                {% else %}
+                    <a href="/artist/{{ current_user.username }}">My Page</a>
+                {% endif %}
+
+
+                <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
 
         </div>

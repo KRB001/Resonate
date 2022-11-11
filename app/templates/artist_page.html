@@ -3,8 +3,9 @@
 {% block content %}
     <!--Title block-->
     <h1>[{{ artist.display_name }}'s Page]</h1>
-    <p>listener/{{ artist.username }}</p>
-    <p>listener since {{ artist.join_date }}</p>
+    <p>artist/{{ artist.username }}</p>
+    <p>artist since {{ artist.join_date }}</p>
+    <p>located in {{ artist.location }}</p>
     <hr>
 
     <h2>Followers:</h2>
@@ -15,8 +16,24 @@
         {% if follower.type == "listener" %}
             <a href="/listener/{{ follower.username }}">{{ follower.display_name }}</a>
         {% endif %}
+        <!--If follower is an artist display link to listener page-->
         {% if follower.type == "artist" %}
             <a href="/artist/{{ follower.username }}">{{ follower.display_name }}</a>
+        {% endif %}
+        <br>
+    {% endfor %}
+
+        <h2>Following:</h2>
+
+    <!--Following block-->
+    {% for following in followed %}
+        <!--If following user is a listener display link to listener page-->
+        {% if following.type == "listener" %}
+            <a href="/listener/{{ following.username }}">{{ following.display_name }}</a>
+        {% endif %}
+        <!--If following user is an artist display link to artist page-->
+        {% if following.type == "artist" %}
+            <a href="/artist/{{ following.username }}">{{ following.display_name }}</a>
         {% endif %}
         <br>
     {% endfor %}
