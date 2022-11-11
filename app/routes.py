@@ -142,6 +142,50 @@ def listener(name):
     else:
         return render_template("index.html", title="Home")
 
+@app.route('/follow/<name>')
+@login_required
+def follow(name):
+    if Listener.query.filter_by(username=name).first() is not None:
+        user = Listener.query.filter_by(username=name).first()
+        user_type = "listener"
+    elif Artist.query.filter_by(username=name).first() is not None:
+        user = Artist.query.filter_by(username=name).first()
+        user_type = "artist"
+    else:
+        flash('User does not exist')
+        return redirect('/index')
+
+    if current_user.is_following(user):
+        flash('You are already following this user')
+        return redirect('/' + user_type + '/' + user.username)
+
+    current_user.follow(user)
+    db.session.commit()
+    flash('You are now following {}!'.format(user.display_name))
+    return redirect('/' + user_type + '/' + user.username)
+
+@app.route('/unfollow/<name>')
+@login_required
+def unfollow(name):
+    if Listener.query.filter_by(username=name).first() is not None:
+        user = Listener.query.filter_by(username=name).first()
+        user_type = "listener"
+    elif Artist.query.filter_by(username=name).first() is not None:
+        user = Artist.query.filter_by(username=name).first()
+        user_type = "artist"
+    else:
+        flash('User does not exist')
+        return redirect('/index')
+
+    if not current_user.is_following(user):
+        flash('You are not following this user')
+        return redirect('/' + user_type + '/' + user.username)
+
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are no longer following {}'.format(user.display_name))
+    return redirect('/' + user_type + '/' + user.username)
+
 @app.route('/resetDB')
 def resetDB():
 

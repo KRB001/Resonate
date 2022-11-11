@@ -9,7 +9,13 @@
             {{ genre.genre.name }} /
         {% endfor %}
     </h2>
-    <p>artist/{{ artist.username }}</p>
+    {% if current_user.username != artist.username %}
+        {% if not current_user.is_following(artist) %}
+            <p>artist/{{ artist.username }} <a href="/follow/{{ artist.username }}">[Follow]</a></p>
+        {% else %}
+            <p>artist/{{ artist.username }} <a href="/unfollow/{{ artist.username }}">[Unfollow]</a></p>
+        {% endif %}
+    {% endif %}
     <p>artist since {{ artist.join_date }}</p>
     <p>located in {{ artist.location }}</p>
     <hr>

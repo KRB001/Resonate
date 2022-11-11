@@ -3,7 +3,13 @@
 {% block content %}
     <!--Title block-->
     <h1>[{{ listener.display_name }}'s Page]</h1>
-    <p>listener/{{ listener.username }}</p>
+    {% if current_user.username != listener.username %}
+        {% if not current_user.is_following(listener) %}
+            <p>artist/{{ listener.username }} <a href="/follow/{{ listener.username }}">[Follow]</a></p>
+        {% else %}
+            <p>artist/{{ listener.username }} <a href="/unfollow/{{ listener.username }}">[Unfollow]</a></p>
+        {% endif %}
+    {% endif %}
     <p>listener since {{ listener.join_date }}</p>
     <hr>
 
