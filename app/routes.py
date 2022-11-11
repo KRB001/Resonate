@@ -271,6 +271,12 @@ def populate_db():
     user5.follow(user1)
     user6.follow(user2)
 
+    # set some similar artists
+    user3.add_similar(user4)
+    user4.add_similar(user5)
+    user4.add_similar(user3)
+    user5.add_similar(user3)
+
     db.session.commit()
 
     # flash message / return to index
