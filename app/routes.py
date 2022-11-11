@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app.models import *
 from app.forms import *
+from sqlalchemy import cast, Date
 import datetime
 
 
@@ -104,7 +105,14 @@ def artist(name):
 @app.route('/listener/<name>')
 @login_required
 def listener(name):
-    return "LISTENER PAGE"
+    listener = Listener.query.filter_by(username=name).first()
+    if listener is not None:
+        display_name = listener.display_name
+        return render_template('listener_page.html',
+                               title="{}'s Page".format(display_name),
+                               listener=listener)
+    else:
+        return render_template("index.html", title="Home")
 
 @app.route('/resetDB')
 def resetDB():
