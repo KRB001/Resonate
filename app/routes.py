@@ -50,11 +50,13 @@ def register():
     return render_template('register.html')
 @app.route('/register_listener', methods=['GET', 'POST'])
 def register_listener():
+        now = datetime.datetime.now()
+
         if current_user.is_authenticated:
             return redirect(url_for('index'))
         form = ListenerRegistrationForm()
         if form.validate_on_submit():
-            user = User(username=form.username.data, email=form.email.data)
+            user = User(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
             user.set_password(form.password.data)
             db.session.add(user)
             listener = Listener(id=user.id)
@@ -68,20 +70,37 @@ def register_listener():
 
 @app.route('/register_artist', methods=['GET', 'POST'])
 def register_artist():
+    now = datetime.datetime.now()
+
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = ArtistRegistrationForm()
+
+    form.genres.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
+    form.similar_artists.choices = [(a.id, a.display_name) for a in User.query.filter_by(type='artist').order_by('display_name')]
+
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        artist = Artist(id=user.id, location=form.location.data)
+        artist = Artist(username=form.username.data, email=form.email.data, display_name=form.display_name.data, location=form.location.data, join_date=now)
+        artist.set_password(form.password.data)
         db.session.add(artist)
         db.session.commit()
+        login_user(artist)
+
+        for genre in form.genres.data:
+            genre_entry = Genre.query.filter_by(id=genre).first()
+            ag = ArtistGenre(artist_id=artist.id, genre_id=genre_entry.id)
+            db.session.add(ag)
+            db.session.commit()
+
+        for similar_artist in form.similar_artists.data:
+            similar_entry = Artist.query.filter_by(id=similar_artist).first()
+            current_user.add_similar(similar_entry)
+
         flash("Registration complete!")
-        login_user(user)
         return redirect(url_for('index'))
-    return render_template('register_artist.html', title='Register', form=form)
+
+    return render_template('register_artist.html', title="Register", form=form)
 
 
 
