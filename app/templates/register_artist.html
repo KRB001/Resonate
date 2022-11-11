@@ -11,6 +11,22 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+
+    <p>
+            {{ form.display_name.label }}<br>
+            {{ form.display_name(size=32) }}<br>
+            {% for error in form.display_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+     <p>
+            {{ form.similar_artists.label }}<br>
+            {{ form.similar_artists(size=10) }}<br>
+            {% for error in form.similar_artists.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
     <p>
             {{ form.email.label }}<br>
             {{ form.email(size=32) }}<br>
@@ -39,6 +55,13 @@
             {% for error in form.location.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
+    </p>
+
+        {{ form.genres.label }}<br>
+        {{ form.genres(size=10)}}
+        {% for error in form.genres.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
     </p>
 
         {{ form.submit }}

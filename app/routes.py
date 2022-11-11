@@ -6,7 +6,6 @@ from app.models import *
 from app.forms import *
 import datetime
 
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -50,36 +49,51 @@ def register():
     return render_template('register.html')
 @app.route('/register_listener', methods=['GET', 'POST'])
 def register_listener():
+        now = datetime.datetime.now()
         if current_user.is_authenticated:
             return redirect(url_for('index'))
         form = ListenerRegistrationForm()
         if form.validate_on_submit():
-            user = User(username=form.username.data, email=form.email.data)
-            user.set_password(form.password.data)
-            db.session.add(user)
-            listener = Listener(id=user.id)
+            #listener display name is automatically set to username, they'll have the option to change it in settings
+            listener = Listener(username=form.username.data, display_name=form.username.data, email=form.email.data, join_date=now)
+            listener.set_password(form.password.data)
             db.session.add(listener)
             db.session.commit()
             flash("Registration complete!")
-            login_user(user)
+            login_user(listener)
             return redirect(url_for('index'))
         return render_template('register_listener.html', title='Register', form=form)
 
 
 @app.route('/register_artist', methods=['GET', 'POST'])
 def register_artist():
+    now = datetime.datetime.now()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = ArtistRegistrationForm()
+    form.genres.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
+    form.similar_artists.choices = [(a.id, a.display_name) for a in User.query.filter_by(type='artist').order_by('display_name')]
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        artist = Artist(id=user.id, location=form.location.data)
+        artist = Artist(username=form.username.data, display_name=form.display_name.data, email=form.email.data, location=form.location.data, join_date=now)
+        artist.set_password(form.password.data)
         db.session.add(artist)
         db.session.commit()
+
+        for genre in form.genres.data:
+            genre_entry = Genre.query.filter_by(id=genre).first()
+            if genre_entry is not None:
+                ag = ArtistGenre(artist_id=artist.id, genre_id=genre_entry.id)
+                db.session.add(ag)
+        db.session.commit()
+
+        login_user(artist)
+
+        for similar_artist in form.similar_artists.data:
+            similar_entry = Artist.query.filter_by(id=similar_artist).first()
+            if similar_entry is not None:
+                current_user.add_similar(similar_entry)
+
         flash("Registration complete!")
-        login_user(user)
         return redirect(url_for('index'))
     return render_template('register_artist.html', title='Register', form=form)
 
@@ -129,9 +143,10 @@ def populate_db():
     genre8 = Genre(name="Rap")
     genre9 = Genre(name="R&B")
     genre10 = Genre(name="Country")
+    genre11 = Genre(name="Other")
 
     db.session.add_all([genre1, genre2, genre3, genre4, genre5,
-                        genre6, genre7, genre8, genre9, genre10])
+                        genre6, genre7, genre8, genre9, genre10, genre11])
     db.session.commit()
 
     # declare users

@@ -31,10 +31,13 @@ class ListenerRegistrationForm(FlaskForm):
 
 class ArtistRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
+    display_name = StringField('Artist Name', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     repeat_password = PasswordField("Repeat Password", validators=[DataRequired(), EqualTo('password')])
     location = StringField('Location', validators=[DataRequired()])
+    genres = SelectMultipleField('Genre Tags', validators=[DataRequired()], coerce=int)
+    similar_artists = SelectMultipleField('Similar Artists (choose up to 3)', coerce=int)
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
@@ -46,3 +49,8 @@ class ArtistRegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user != None:
             raise ValidationError("Email associated with another account. Please use a different email.")
+
+
+    def validate_similar_artists(self, similar_artists):
+        if len(similar_artists.data) > 3:
+            raise ValidationError("Please only choose 3 similar artists.")
