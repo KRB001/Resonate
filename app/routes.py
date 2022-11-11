@@ -34,6 +34,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        print("Logged in user {}".format(user))
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
@@ -42,6 +43,7 @@ def login():
 
 @app.route("/logout")
 def logout():
+    print ("Logged out user {}".format(current_user))
     logout_user()
     return redirect(url_for('index'))
 
@@ -61,6 +63,7 @@ def register_listener():
             db.session.add(listener)
             db.session.commit()
             flash("Registration complete!")
+            print("Registered  user {}".format(user))
             login_user(user)
             return redirect(url_for('index'))
         return render_template('register_listener.html', title='Register', form=form)
@@ -78,6 +81,7 @@ def register_artist():
         artist = Artist(id=user.id, location=form.location.data)
         db.session.add(artist)
         db.session.commit()
+        print("Registered  user {}".format(user))
         flash("Registration complete!")
         login_user(user)
         return redirect(url_for('index'))
