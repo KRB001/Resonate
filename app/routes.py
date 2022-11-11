@@ -99,7 +99,15 @@ def settings():
 @app.route('/artist/<name>')
 @login_required
 def artist(name):
-    return "ARTIST PAGE"
+    artist = Listener.query.filter_by(username=name).first()
+    if artist is not None:
+        followers = artist.followers
+        display_name = listener.display_name
+        return render_template('artist_page.html',
+                               title="{}'s Page".format(display_name),
+                               artist=artist, followers=followers)
+    else:
+        return render_template("index.html", title="Home")
 
 
 @app.route('/listener/<name>')
@@ -107,10 +115,11 @@ def artist(name):
 def listener(name):
     listener = Listener.query.filter_by(username=name).first()
     if listener is not None:
+        followers = listener.followers
         display_name = listener.display_name
         return render_template('listener_page.html',
                                title="{}'s Page".format(display_name),
-                               listener=listener)
+                               listener=listener, followers=followers)
     else:
         return render_template("index.html", title="Home")
 
