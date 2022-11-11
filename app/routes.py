@@ -119,9 +119,11 @@ def artist(name):
         followers = artist.followers
         followed = artist.followed
         display_name = artist.display_name
+        genres = artist.genres
         return render_template('artist_page.html',
                                title="{}'s Page".format(display_name),
-                               artist=artist, followers=followers, followed=followed)
+                               artist=artist, followers=followers, followed=followed,
+                               genres=genres)
     else:
         return render_template("index.html", title="Home")
 
@@ -306,6 +308,12 @@ def populate_db():
     user6.follow(user2)
 
     db.session.commit()
+
+    # add some similar artists
+    user3.add_similar(user4)
+    user5.add_similar(user3)
+    user4.add_similar(user3)
+    user3.add_similar(user5)
 
     # flash message / return to index
     flash('Populated database with default data')

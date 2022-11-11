@@ -3,6 +3,12 @@
 {% block content %}
     <!--Title block-->
     <h1>[{{ artist.display_name }}'s Page]</h1>
+    <!--Artist's genres-->
+    <h2>
+        {% for genre in genres %}
+            {{ genre.genre.name }} /
+        {% endfor %}
+    </h2>
     <p>artist/{{ artist.username }}</p>
     <p>artist since {{ artist.join_date }}</p>
     <p>located in {{ artist.location }}</p>
