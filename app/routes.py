@@ -57,7 +57,7 @@ def register_listener():
             return redirect(url_for('index'))
         form = ListenerRegistrationForm()
         if form.validate_on_submit():
-            user = User(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
+            user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
             user.set_password(form.password.data)
             db.session.add(user)
             listener = Listener(id=user.id)
