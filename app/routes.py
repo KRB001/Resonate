@@ -60,8 +60,6 @@ def register_listener():
             user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
             user.set_password(form.password.data)
             db.session.add(user)
-            listener = Listener(id=user.id)
-            db.session.add(listener)
             db.session.commit()
             flash("Registration complete!")
             login_user(user)
