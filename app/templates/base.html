@@ -16,21 +16,22 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
-          <li class="nav-item">
-                <li class="navbar-nav mr-auto">
+        <li class="nav-item">
+        <li class="navbar-nav mr-auto">
         {% if current_user.is_anonymous %}
-            <a class="nav-link" href="login">Login<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="login">Login <span class="sr-only">(current)</span></a>
         {% else %}
              {% if current_user.type == "listener" %}
-        <a class="nav-link" href="/listener/{{ current_user.username }}">My Page<span class="sr-only">(current)</span></a>
-                 {% else %}
+                 <a class="nav-link" href="/listener/{{ current_user.username }}">My Page<span class="sr-only">(current)</span></a>
+             {% else %}
                  <a class="nav-link" href="/artist/{{ current_user.username }}">My Page<span class="sr-only">(current)</span></a>
-                 {% endif %}
+             {% endif %}
             <a class="nav-link" href="{{ url_for('logout') }}">Logout <span class="sr-only">(current)</span></a>
-      </li>
+            </li>
         {% endif %}
     </li>
-   {#extra navbar stuff like search and local goes here #}
+        <a class="nav-link" href="/discover"> Discover<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/local">Local<span class="sr-only">(current)</span></a>
       </li>
     </ul>
   </div>

@@ -16,12 +16,12 @@ def index():
 
 @app.route('/discover')
 def discover():
-    return "DISCOVER"
+    return render_template('discover.html', title="Discover")
 
 
 @app.route('/local')
 def local():
-    return "LOCAL MUSIC"
+    return render_template('local.html', title="Local Music")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -49,22 +49,22 @@ def logout():
 @app.route('/register')
 def register():
     return render_template('register.html')
+
 @app.route('/register_listener', methods=['GET', 'POST'])
 def register_listener():
-        now = datetime.datetime.now()
-
-        if current_user.is_authenticated:
-            return redirect(url_for('index'))
-        form = ListenerRegistrationForm()
-        if form.validate_on_submit():
-            user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
-            user.set_password(form.password.data)
-            db.session.add(user)
-            db.session.commit()
-            flash("Registration complete!")
-            login_user(user)
-            return redirect(url_for('index'))
-        return render_template('register_listener.html', title='Register', form=form)
+    now = datetime.datetime.now()
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ListenerRegistrationForm()
+    if form.validate_on_submit():
+        user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Registration complete!")
+        login_user(user)
+        return redirect(url_for('index'))
+    return render_template('register_listener.html', title='Register', form=form)
 
 
 @app.route('/register_artist', methods=['GET', 'POST'])
