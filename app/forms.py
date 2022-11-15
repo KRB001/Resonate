@@ -54,3 +54,8 @@ class ArtistRegistrationForm(FlaskForm):
     def validate_similar_artists(self, similar_artists):
         if len(similar_artists.data) > 3:
             raise ValidationError("Please only choose 3 similar artists.")
+
+
+class LocalForm(FlaskForm):
+    location = StringField('Location', validators=[DataRequired()])
+    submit = SubmitField('Submit')

@@ -19,9 +19,17 @@ def discover():
     return render_template('discover.html', title="Discover")
 
 
-@app.route('/local')
+@app.route('/local', methods=['GET', 'POST'])
 def local():
-    return render_template('local.html', title="Local Music")
+    form = LocalForm()
+    location_search = form.location.data
+    if form.validate_on_submit():
+        if Artist.query.filter(Artist.location.contains(location_search)).first() is not None:
+            artists = Artist.query.filter(Artist.location.contains(location_search))
+            return render_template('local_results.html', title="Local Music", artists=artists)
+        else:
+            return render_template('local_results.html', title="Local Music")
+    return render_template('local.html', title="Local Music", form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -246,7 +254,18 @@ def populate_db():
                      display_name="KRB", join_date=now)
     user6.set_password("krb")
 
-    db.session.add_all([user1, user2, user3, user4, user5, user6])
+    user7 = Artist(username="user7", email="user7@resonate.net",
+                   display_name="Another Band", join_date=now,
+                   location="Ithaca, NY")
+    user7.set_password("password7")
+
+    user8 = Artist(username="user8", email="user8@resonate.net",
+                   display_name="Maybe Not a Band", join_date=now,
+                   location="Island of Ithaca, Greece")
+    user8.set_password("password8")
+
+    db.session.add_all([user1, user2, user3, user4, user5, user6,
+                        user7, user8])
     db.session.commit()
 
     # declare artist genres
@@ -257,8 +276,14 @@ def populate_db():
     ag5 = ArtistGenre(artist_id=user5.id, genre_id=genre5.id)
     ag6 = ArtistGenre(artist_id=user5.id, genre_id=genre6.id)
     ag7 = ArtistGenre(artist_id=user5.id, genre_id=genre7.id)
+    ag8 = ArtistGenre(artist_id=user7.id, genre_id=genre2.id)
+    ag9 = ArtistGenre(artist_id=user7.id, genre_id=genre3.id)
+    ag10 = ArtistGenre(artist_id=user8.id, genre_id=genre8.id)
+    ag11 = ArtistGenre(artist_id=user8.id, genre_id=genre5.id)
+    ag12 = ArtistGenre(artist_id=user8.id, genre_id=genre7.id)
 
-    db.session.add_all([ag1, ag2, ag3, ag4, ag5, ag6, ag7])
+    db.session.add_all([ag1, ag2, ag3, ag4, ag5, ag6, ag7,
+                        ag8, ag9, ag10, ag11, ag12])
     db.session.commit()
 
     # declare user frequent artists
