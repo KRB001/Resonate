@@ -25,6 +25,9 @@ class User(UserMixin, db.Model):
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
 
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
 

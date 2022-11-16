@@ -54,3 +54,13 @@ class ArtistRegistrationForm(FlaskForm):
     def validate_similar_artists(self, similar_artists):
         if len(similar_artists.data) > 3:
             raise ValidationError("Please only choose 3 similar artists.")
+
+
+class PostForm(FlaskForm):
+    post = TextAreaField('Say something', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class CommentForm(FlaskForm):
+    post = TextAreaField('Reply', validators=[DataRequired()])
+    submit = SubmitField('Submit')

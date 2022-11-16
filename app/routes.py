@@ -140,6 +140,21 @@ def listener(name):
     else:
         return render_template("index.html", title="Home")
 
+@app.route('/post/<id>')
+def post(id):
+    form = CommentForm()
+    post = Post.query.filter_by(id=int(id)).first_or_404()
+
+    comments = Comment.query.filter_by(post_id=id)
+
+    if form.validate_on_submit():
+        comment = Comment(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now(), post_id=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been posted!')
+        return redirect(url_for('post', id = post.id, post=post, comments=comments))
+    return render_template('post.html', post=post, comments=comments)
+
 @app.route('/follow/<name>')
 @login_required
 def follow(name):
