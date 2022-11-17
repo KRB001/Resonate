@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app.models import *
 from app.forms import *
-from sqlalchemy import cast, Date
+from sqlalchemy import cast, Date, desc
 import datetime
 
 
@@ -140,7 +140,7 @@ def listener(name):
     else:
         return render_template("index.html", title="Home")
 
-@app.route('/post/<id>')
+@app.route('/post/<id>', methods=['GET', 'POST'])
 def post(id):
     form = CommentForm()
     post = Post.query.filter_by(id=int(id)).first_or_404()
@@ -153,7 +153,27 @@ def post(id):
         db.session.commit()
         flash('Your comment has been posted!')
         return redirect(url_for('post', id = post.id, post=post, comments=comments))
-    return render_template('post.html', post=post, comments=comments)
+    return render_template('post.html', title=post.text, post=post, comments=comments, form=form)
+
+@app.route('/comment/<id>')
+def comment(id):
+    comment = Comment.query.filter_by(id=int(id)).first_or_404()
+    original_post = Post.query.filter_by(id=comment.post_id).first()
+    return render_template('comment.html', title=comment.text, comment=comment, original_post=original_post)
+
+@app.route('/posts', methods=['GET', 'POST'])
+@login_required
+def posts():
+    form = PostForm()
+    post_list = Post.query.order_by(desc('time_posted'))
+
+    if form.validate_on_submit():
+        post = Post(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now())
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return render_template('posts.html', title="Posts", posts=post_list, form=form)
+    return render_template('posts.html', title="Posts", posts=post_list, form=form)
 
 @app.route('/follow/<name>')
 @login_required
