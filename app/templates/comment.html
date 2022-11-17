@@ -21,12 +21,12 @@
                     {% elif comment.author.type == "artist" %}
                     <a href="{{ url_for('artist', name=comment.author.username) }}">
                         {% endif %}
-
                     {{ comment.author.username }}
                 </a>
                 says:
                 <br>
                 {{ comment.text }}
+                <p> On {{ comment.time_posted }} </p>
             </td>
         </tr>
     </table>

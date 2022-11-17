@@ -18,7 +18,6 @@
                     {% elif post.author.type == "artist" %}
                     <a href="{{ url_for('artist', name=comment.author.username) }}">
                         {% endif %}
-
                     {{ comment.author.username }}
                 </a>
                 says:
