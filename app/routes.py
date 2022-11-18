@@ -145,7 +145,7 @@ def post(id):
     form = CommentForm()
     post = Post.query.filter_by(id=int(id)).first_or_404()
 
-    comments = Comment.query.filter_by(post_id=id)
+    comments = Comment.query.filter_by(post_id=id).order_by(desc('time_posted'))
 
     if form.validate_on_submit():
         comment = Comment(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now(), post_id=post.id)
