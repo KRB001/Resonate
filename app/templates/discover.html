@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>DISCOVER</h1>
+    <h1>DISCOVER NEW ARTISTS</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.discover_by.label }}<br>
+            {{ form.discover_by(size=32) }}<br>
+            {% for error in form.discover_by.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.genres.label }}<br>
+            {{ form.genres(size=8) }}<br>
+            {% for error in form.genres.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.similar_artists.label }}<br>
+            {{ form.similar_artists(size=8) }}<br>
+            {% for error in form.similar_artists.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <input class="btn btn-primary" type="submit" value="Discover">
+    </form>
 {% endblock %}

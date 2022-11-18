@@ -14,9 +14,17 @@ def index():
     return render_template('index.html', title="Home")
 
 
-@app.route('/discover')
+@app.route('/discover', methods=['GET', 'POST'])
 def discover():
-    return render_template('discover.html', title="Discover")
+    form = DiscoverForm()
+
+    form.genres.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
+    form.similar_artists.choices = [(a.id, a.display_name) for a in
+                                    User.query.filter_by(type='artist').order_by('display_name')]
+
+    if form.validate_on_submit():
+        return render_template('index.html', title="Home")
+    return render_template('discover.html', title="Discover", form=form)
 
 
 @app.route('/local', methods=['GET', 'POST'])
@@ -30,6 +38,7 @@ def local():
         else:
             return render_template('local_results.html', title="Local Music")
     return render_template('local.html', title="Local Music", form=form)
+
 
 
 @app.route('/login', methods=['GET', 'POST'])

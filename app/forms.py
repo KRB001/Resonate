@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, IntegerField, DateField, PasswordField, BooleanField, \
-    SelectMultipleField, SelectField
+    SelectMultipleField, SelectField, RadioField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from app.models import User, Listener, Artist
 
@@ -59,6 +59,8 @@ class ArtistRegistrationForm(FlaskForm):
 class LocalForm(FlaskForm):
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
 class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -67,3 +69,10 @@ class PostForm(FlaskForm):
 class CommentForm(FlaskForm):
     post = TextAreaField('Reply', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class DiscoverForm(FlaskForm):
+    discover_by = RadioField('Discover by...', choices=['Genre', 'Similar Artist'])
+    genres = SelectField('Genres', validators=[DataRequired()], coerce=int)
+    similar_artists = SelectField('Similar Artists', validators=[DataRequired()], coerce=int)
+    submit = SubmitField('Submit', validators=[DataRequired()])
