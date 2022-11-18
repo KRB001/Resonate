@@ -1,0 +1,29 @@
+
+<table class="table table-hover">
+        <tr>
+            <td>
+                 {% if post.author.type == 'listener' %}
+                <a href="{{ url_for('listener', name=post.author.username) }}">
+                    {% elif post.author.type == 'artist' %}
+                    <a href="{{ url_for('artist', name=post.author.username) }}">
+                        {% endif %}
+                    <img src="https://cdn.discordapp.com/attachments/1037756499654610975/1042212100082241646/Placeholder_PFP.png"
+                     width="45"
+                    height="45"/>
+                </a>
+            </td>
+            <td>
+                {% if post.author.type == "listener" %}
+                <a href="{{ url_for('listener', name=post.author.username) }}">
+                    {% elif post.author.type == "artist" %}
+                    <a href="{{ url_for('artist', name=post.author.username) }}">
+                        {% endif %}
+
+                    {{ post.author.username }}
+                </a>
+                said:
+                <br>
+                {{ post.text }}
+            </td>
+        </tr>
+    </table>
