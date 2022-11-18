@@ -56,11 +56,9 @@ class ArtistRegistrationForm(FlaskForm):
             raise ValidationError("Please only choose 3 similar artists.")
 
 
-<<<<<<< HEAD
 class LocalForm(FlaskForm):
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
-=======
 class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -69,4 +67,3 @@ class PostForm(FlaskForm):
 class CommentForm(FlaskForm):
     post = TextAreaField('Reply', validators=[DataRequired()])
     submit = SubmitField('Submit')
->>>>>>> master
