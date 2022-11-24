@@ -16,7 +16,10 @@ def index():
 
 @app.route('/discover', methods=['GET', 'POST'])
 def discover():
-    form = DiscoverForm()
+    default_genre_id = Genre.query.order_by('name').first().id
+    default_similar_id = User.query.filter_by(type='artist').order_by('display_name').first().id
+
+    form = DiscoverForm(genres=default_genre_id, similar_artists=default_similar_id)
 
     form.genres.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
     form.similar_artists.choices = [(a.id, a.display_name) for a in
@@ -32,7 +35,7 @@ def discover():
             artist_search_id = form.similar_artists.data
             artist_search = Artist.query.filter_by(id=artist_search_id).first()
             artists = artist_search.similar
-            return render_template('discover_results.html', title="Discover", artists=artists)
+            return render_template('discover_results_similar.html', title="Discover", artists=artists)
 
 
     return render_template('discover.html', title="Discover", form=form)
