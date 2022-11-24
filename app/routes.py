@@ -23,7 +23,18 @@ def discover():
                                     User.query.filter_by(type='artist').order_by('display_name')]
 
     if form.validate_on_submit():
-        return render_template('index.html', title="Home")
+        if form.discover_by.data == "Genre":
+            genre_search_id = form.genres.data
+            genre_search = Genre.query.filter_by(id=genre_search_id).first()
+            artists = genre_search.artists
+            return render_template('discover_results.html', title="Discover", artists=artists)
+        if form.discover_by.data == "Similar Artist":
+            artist_search_id = form.similar_artists.data
+            artist_search = Artist.query.filter_by(id=artist_search_id).first()
+            artists = artist_search.similar
+            return render_template('discover_results.html', title="Discover", artists=artists)
+
+
     return render_template('discover.html', title="Discover", form=form)
 
 
@@ -112,6 +123,7 @@ def register_artist():
         for similar_artist in form.similar_artists.data:
             similar_entry = Artist.query.filter_by(id=similar_artist).first()
             current_user.add_similar(similar_entry)
+            db.session.commit()
 
         flash("Registration complete!")
         return redirect(url_for('index'))
@@ -425,6 +437,8 @@ def populate_db():
     user5.add_similar(user3)
     user4.add_similar(user3)
     user3.add_similar(user5)
+
+    db.session.commit()
 
     # flash message / return to index
     flash('Populated database with default data')

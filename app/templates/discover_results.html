@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>DISCOVER NEW ARTISTS</h1>
+    {% if artists %}
+        <div class="list-group">
+            {% for artist in artists %}
+                <a href="/artist/{{ artist.artist.username }}" class="list-group-item list-group-item-action">
+                    <h3>{{ artist.artist.display_name }}</h3>
+                    <p><b>
+                        {% for genre in artist.artist.genres %}
+                        {{ genre.genre.name }} /
+                        {% endfor %}
+                    </b></p>
+                    <p>Located in {{ artist.artist.location }}</p>
+                </a>
+            {% endfor %}
+        </div>
+        <hr>
+        <p><b>Not what you're looking for?</b></p>
+        <a href="/discover">Find more</a>
+    {% else %}
+        <p><b>No artists found :(</b></p>
+        <a href="/discover">Back</a>
+    {% endif %}
+{% endblock %}

@@ -75,4 +75,4 @@ class DiscoverForm(FlaskForm):
     discover_by = RadioField('Discover by...', choices=['Genre', 'Similar Artist'])
     genres = SelectField('Genres', validators=[DataRequired()], coerce=int)
     similar_artists = SelectField('Similar Artists', validators=[DataRequired()], coerce=int)
-    submit = SubmitField('Submit', validators=[DataRequired()])
+    submit = SubmitField('Submit')
