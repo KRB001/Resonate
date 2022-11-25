@@ -11,7 +11,10 @@ import datetime
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', title="Home")
+    if current_user.is_authenticated:
+        return render_template('index.html', title="Home", user=current_user)
+    else:
+        return render_template('index.html', title="Home", form=SearchForm())
 
 
 @app.route('/discover', methods=['GET', 'POST'])

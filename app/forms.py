@@ -76,3 +76,8 @@ class DiscoverForm(FlaskForm):
     genres = SelectField('Genres', validators=[DataRequired()], coerce=int)
     similar_artists = SelectField('Similar Artists', validators=[DataRequired()], coerce=int)
     submit = SubmitField('Submit')
+
+
+class SearchForm(FlaskForm):
+    search_term = TextAreaField('What are you looking for?', validators=[DataRequired()])
+    submit = SubmitField('Search')
