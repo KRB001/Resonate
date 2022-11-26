@@ -9,7 +9,7 @@ import datetime
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     if current_user.is_authenticated:
         return render_template('index.html', title="Home", user=current_user)
@@ -153,6 +153,22 @@ def artist(name):
         followed = artist.followed
         display_name = artist.display_name
         genres = artist.genres
+
+        # tracking user's frequent genres via listener_to_genre
+        for genre in genres:
+            listener_genre = ListenerToGenre.query.filter_by(genre_id=genre.genre.id, listener_id=current_user.id).first()
+            if listener_genre is not None:
+
+                listener_genre.page_visit_count += 1
+
+            else:
+                print(current_user.username + " / " + genre.genre.name + ": Listener Genre Link Does Not Exist")
+                print("Creating Link")
+                ltg_temp = ListenerToGenre(listener_id=current_user.id, genre_id=genre.genre.id, page_visit_count=1)
+                db.session.add(ltg_temp)
+
+            db.session.commit()
+
         return render_template('artist_page.html',
                                title="{}'s Page".format(display_name),
                                artist=artist, followers=followers, followed=followed,
