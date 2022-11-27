@@ -8,7 +8,37 @@
 
     {% if user %}
         <b><p>Hi {{ user.display_name }}!</p></b>
-</div>
+        <p>Today's date is {{ date }}</p>
+        <hr>
+
+        <div class="alert">
+                <em><h4>your feed</h4></em>
+                {% for post in posts %}
+                    <p> {% include '_post.html' %} </p>
+                    <p> On {{ post.time_posted }}</p>
+                    <p><a href="{{ url_for('post', id=post.id) }}">View Post</a></p>
+                    <br>
+                {% endfor %}
+        </div>
+
+        <hr>
+
+        <div class="alert">
+            <em><h4>artists for you</h4></em>
+            {% if recommended_artists %}
+                {% for artist in recommended_artists %}
+                    <p>{{ artist }}</p>
+                {% endfor %}
+            {% else %}
+                <p>you haven't visited enought artist pages</p>
+                <p>to get artist recommendations :(</p>
+                <a href="/discover">
+                    <button type="button" class="btn btn-secondary">DISCOVER</button>
+                </a>
+            {% endif %}
+            <br>
+        </div>
+
     {% else %}
         <p>Resonate is a social media site for people who make music</p>
         <p>and people who listen to music.</p>

@@ -11,8 +11,42 @@ import datetime
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    date = datetime.date.today()
     if current_user.is_authenticated:
-        return render_template('index.html', title="Home", user=current_user)
+
+        post_list = []
+        for followed in current_user.followed:
+            for current_post in followed.posts:
+                post_list.append(current_post)
+
+        visited_genres = ListenerToGenre.query.filter_by(listener_id=current_user.id).order_by(desc('page_visit_count'))
+        visited_genres_list = []
+
+        # convert query to list
+        for genre in visited_genres:
+            visited_genres_list.append(genre)
+        favorite_genres_temp = []
+        favorite_genres = []
+
+        if len(visited_genres_list) > 2:
+
+            # process top 3
+            for i in range(3):
+                favorite_genres_temp.append(visited_genres_list[i])
+
+            # get actual genres
+            for genre in favorite_genres_temp:
+                favorite_genres.append(Genre.query.filter_by(id=genre.genre_id).first())
+
+            return render_template('index.html', title="Home", user=current_user,
+                                   date=date, posts=post_list, recommended_artists=favorite_genres)
+        else:
+            return render_template('index.html', title="Home", user=current_user,
+                                   date=date, posts=post_list)
+
+
+
+
     else:
         return render_template('index.html', title="Home", form=SearchForm())
 
