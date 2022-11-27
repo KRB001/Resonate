@@ -1,3 +1,4 @@
+import random
 from flask import render_template, redirect, url_for, flash, request
 from app import app
 from flask_login import login_user, logout_user, current_user, login_required
@@ -27,6 +28,8 @@ def index():
             visited_genres_list.append(genre)
         favorite_genres_temp = []
         favorite_genres = []
+        all_suggested_artists = []
+        suggested_artists = []
 
         if len(visited_genres_list) > 2:
 
@@ -38,8 +41,28 @@ def index():
             for genre in favorite_genres_temp:
                 favorite_genres.append(Genre.query.filter_by(id=genre.genre_id).first())
 
+            # collect all artists to be recommended
+            for genre in favorite_genres:
+                for current_artist in genre.artists:
+                    all_suggested_artists.append(current_artist.artist)
+
+            # remove duplicates
+            all_suggested_artists = [*set(all_suggested_artists)]
+
+            # remove already followed artists
+            for current_artist in all_suggested_artists:
+                if current_user.is_following(current_artist):
+                    all_suggested_artists.remove(current_artist)
+
+            # finally, generate three suggested artists
+            if len(all_suggested_artists) > 2:
+                suggested_artists = random.choices(all_suggested_artists, k=3)
+            else:
+                suggested_artists.extend(all_suggested_artists)
+
             return render_template('index.html', title="Home", user=current_user,
-                                   date=date, posts=post_list, recommended_artists=favorite_genres)
+                                   date=date, posts=post_list, suggested_artists=suggested_artists)
+
         else:
             return render_template('index.html', title="Home", user=current_user,
                                    date=date, posts=post_list)

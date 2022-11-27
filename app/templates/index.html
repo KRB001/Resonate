@@ -25,12 +25,24 @@
 
         <div class="alert">
             <em><h4>artists for you</h4></em>
-            {% if recommended_artists %}
-                {% for artist in recommended_artists %}
-                    <p>{{ artist }}</p>
-                {% endfor %}
+            {% if suggested_artists %}
+
+                <div class="list-group">
+                    {% for artist in suggested_artists %}
+                        <a href="/artist/{{ artist.username }}" class="list-group-item list-group-item-action">
+                            <h3>{{ artist.display_name }}</h3>
+                            <p><b>
+                                {% for genre in artist.genres %}
+                                {{ genre.genre.name }} /
+                                {% endfor %}
+                            </b></p>
+                            <p>Located in {{ artist.location }}</p>
+                        </a>
+                    {% endfor %}
+                </div>
+
             {% else %}
-                <p>you haven't visited enought artist pages</p>
+                <p>you haven't visited enough artist pages</p>
                 <p>to get artist recommendations :(</p>
                 <a href="/discover">
                     <button type="button" class="btn btn-secondary">DISCOVER</button>
