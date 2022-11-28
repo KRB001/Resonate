@@ -148,7 +148,8 @@ def register_listener():
         return redirect(url_for('index'))
     form = ListenerRegistrationForm()
     if form.validate_on_submit():
-        user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now)
+        user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now,
+                        bio=form.bio.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -171,7 +172,8 @@ def register_artist():
     form.similar_artists.choices = [(a.id, a.display_name) for a in User.query.filter_by(type='artist').order_by('display_name')]
 
     if form.validate_on_submit():
-        artist = Artist(username=form.username.data, email=form.email.data, display_name=form.display_name.data, location=form.location.data, join_date=now)
+        artist = Artist(username=form.username.data, email=form.email.data, display_name=form.display_name.data, location=form.location.data, join_date=now,
+                        bio=form.bio.data)
         artist.set_password(form.password.data)
         db.session.add(artist)
         db.session.commit()
@@ -326,6 +328,7 @@ def unfollow(name):
     db.session.commit()
     flash('You are no longer following {}'.format(user.display_name))
     return redirect('/' + user_type + '/' + user.username)
+
 
 @app.route('/resetDB')
 def resetDB():
@@ -523,6 +526,7 @@ def populate_db():
     # flash message / return to index
     flash('Populated database with default data')
     return render_template('base.html', title='Populated')
+
 
 def reset_db():
     meta = db.metadata
