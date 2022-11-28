@@ -113,6 +113,10 @@ def local():
             return render_template('local_results.html', title="Local Music")
     return render_template('local.html', title="Local Music", form=form)
 
+@app.route('/search/<query>', methods=['GET', 'POST'])
+
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
