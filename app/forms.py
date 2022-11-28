@@ -17,6 +17,7 @@ class ListenerRegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     repeat_password = PasswordField("Repeat Password", validators=[DataRequired(),EqualTo('password')])
+    bio = TextAreaField('User Bio')
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -37,6 +38,7 @@ class ArtistRegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     repeat_password = PasswordField("Repeat Password", validators=[DataRequired(), EqualTo('password')])
     location = StringField('Location', validators=[DataRequired()])
+    bio = TextAreaField('User Bio')
     genres = SelectMultipleField('Genre tags', validators=[DataRequired()], coerce=int)
     similar_artists = SelectMultipleField('Similar Artists (select up to 3)', coerce=int)
     submit = SubmitField('Submit')

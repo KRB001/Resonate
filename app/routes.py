@@ -361,42 +361,43 @@ def populate_db():
 
     # declare users
     user1 = Listener(username="user1", email="user1@resonate.net",
-                     display_name="User 1", join_date=now
-                     )
+                     display_name="User 1", join_date=now,
+                     bio="Bio Text Here")
     user1.set_password("password1")
 
     user2 = Listener(username="user2", email="user2@resonate.net",
-                     display_name="User 2", join_date=now
+                     display_name="User 2", join_date=now,
+                     bio="Bio Text Here"
                      )
     user2.set_password("password2")
 
     user3 = Artist(username="user3", email="user3@resonate.net",
                    display_name="The Cool Band", join_date=now,
-                   location="Ithaca, NY")
+                   location="Ithaca, NY", bio="Bio Text Here")
     user3.set_password("password3")
 
     user4 = Artist(username="user4", email="user4@resonate.net",
                    display_name="The Very Cool Band", join_date=now,
-                   location="Hell, MI")
+                   location="Hell, MI", bio="Bio Text Here")
     user4.set_password("password4")
 
     user5 = Artist(username="user5", email="user5@resonate.net",
                    display_name="User 5", join_date=now,
-                   location="Antarctica")
+                   location="Antarctica", bio="Bio Text Here")
     user5.set_password("password5")
 
     user6 = Listener(username="krb", email="krb@krb.net",
-                     display_name="KRB", join_date=now)
+                     display_name="KRB", join_date=now, bio="Bio Text Here")
     user6.set_password("krb")
 
     user7 = Artist(username="user7", email="user7@resonate.net",
                    display_name="Another Band", join_date=now,
-                   location="Ithaca, NY")
+                   location="Ithaca, NY", bio="Bio Text Here")
     user7.set_password("password7")
 
     user8 = Artist(username="user8", email="user8@resonate.net",
                    display_name="Maybe Not a Band", join_date=now,
-                   location="Island of Ithaca, Greece")
+                   location="Island of Ithaca, Greece", bio="Bio Text Here")
     user8.set_password("password8")
 
     db.session.add_all([user1, user2, user3, user4, user5, user6,
@@ -521,7 +522,7 @@ def populate_db():
 
     # flash message / return to index
     flash('Populated database with default data')
-    return render_template('index.html', title='Populated')
+    return render_template('base.html', title='Populated')
 
 def reset_db():
     meta = db.metadata
