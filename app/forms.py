@@ -84,6 +84,7 @@ class SearchForm(FlaskForm):
     search_term = TextAreaField('What are you looking for?', validators=[DataRequired()])
     submit = SubmitField('Search')
 
+
 class EditAccountForm(FlaskForm):
     display_name = StringField('Display Name', validators=[DataRequired()])
     bio = TextAreaField('User Bio')
