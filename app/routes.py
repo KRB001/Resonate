@@ -9,7 +9,7 @@ from sqlalchemy import cast, Date, desc
 import datetime
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     date = datetime.date.today()
@@ -71,7 +71,10 @@ def index():
 
 
     else:
-        return render_template('index.html', title="Home", form=SearchForm())
+        form = SearchForm()
+        if form.validate_on_submit():
+            return redirect(url_for('search', title="Search", query=form.search_term.data, form=form))
+        return render_template('index.html', title="Home", form=form)
 
 
 @app.route('/discover', methods=['GET', 'POST'])
@@ -113,7 +116,41 @@ def local():
             return render_template('local_results.html', title="Local Music")
     return render_template('local.html', title="Local Music", form=form)
 
+
 @app.route('/search/<query>', methods=['GET', 'POST'])
+def search(query):
+    form = SearchForm()
+    found_users = []
+    found_posts = []
+    if form.validate_on_submit():
+        query = form.search_term.data
+        for user in User.query.filter(Artist.display_name.contains(query)):
+            found_users.append(user)
+
+        for artist in Artist.query.filter(Artist.location.contains(query)):
+            if not (artist in found_users):
+                found_users.append(artist)
+
+        genre_search = Genre.query.filter(Genre.name.contains(query))
+        for genre in genre_search:
+            artists = genre.artists
+            for artist in artists:
+                if not (artist in found_users):
+                    found_users.append(artist)
+
+        for post in Post.query.filter(Post.title.contains(query)):
+            found_posts.append(post)
+
+        for post in Post.query.filter(Post.text.contains(query)):
+            if not (post in found_posts):
+                found_posts.append(post)
+        return render_template('search.html',title='Search', users=found_users, posts=found_posts,
+                                       form=form, query=query)
+
+    elif request.method == 'GET':
+        form.search_term.data = query
+    return render_template('search.html', title='Search', users=found_users, posts=found_posts, form=form, query=query)
+
 
 
 
