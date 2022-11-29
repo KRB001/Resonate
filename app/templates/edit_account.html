@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+    <h1>EDIT ACCOUNT</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.display_name.label }}<br>
+            {{ form.display_name(size=32) }}<br>
+            {% for error in form.display_name.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.bio.label }}<br>
+            {{ form.bio(size=32) }}<br>
+            {% for error in form.bio.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+
+{% endblock %}
