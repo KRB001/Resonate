@@ -250,6 +250,13 @@ def listener(name):
     else:
         return render_template("index.html", title="Home")
 
+@app.route('/listener/<name>/edit')
+@login_required
+def edit_listener(name):
+    listener = Listener.query.filter_by(username=name).first()
+    if listener is not None:
+        return render_template('edit_account.html', title="Edit Account")
+
 @app.route('/post/<id>', methods=['GET', 'POST'])
 def post(id):
     form = CommentForm()
