@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<div class="d-flex align-items-left justify-content-left">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+        </div>
+    <br>
+    <div class="list-group">
+                    {% for user in users %}
+                        {% if user.type == "listener" %}
+                            <a href="/listener/{{ user.username }}" class="list-group-item list-group-item-action">
+                            <h3>{{ user.display_name }}</h3>
+                         </a>
+                        {% elif user.type == "artist" %}
+                        <a href="/artist/{{ user.username }}" class="list-group-item list-group-item-action">
+                            <h3>{{ user.display_name }}</h3>
+                            <p><b>
+                                {% for genre in user.genres %}
+                                {{ genre.genre.name }} /
+                                {% endfor %}
+                            </b></p>
+                            <p>Located in {{ user.location }}</p>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+    <div class="alert">
+                {% for post in posts %}
+                    <p> {% include '_post.html' %} </p>
+                    <p> On {{ post.time_posted }}</p>
+                    <p><a href="{{ url_for('post', id=post.id) }}">View Post</a></p>
+                    <br>
+                {% endfor %}
+        </div>
+
+{% endblock %}
