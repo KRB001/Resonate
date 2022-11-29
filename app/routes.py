@@ -117,6 +117,7 @@ def local():
     return render_template('local.html', title="Local Music", form=form)
 
 
+
 @app.route('/search/<query>', methods=['GET', 'POST'])
 def search(query):
     form = SearchForm()
