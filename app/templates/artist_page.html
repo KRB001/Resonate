@@ -19,6 +19,9 @@
     <p>artist since {{ artist.join_date }}</p>
     <p>located in {{ artist.location }}</p>
     <em><p>{{ artist.bio }}</p></em>
+    {% if current_user.username == artist.username %}
+        <a href="/artist/{{ artist.username }}/edit">[Edit Account]</a>
+    {% endif %}
     <hr>
 
     <h2>Followers:</h2>

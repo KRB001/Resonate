@@ -12,6 +12,9 @@
     {% endif %}
     <p>listener since {{ listener.join_date }}</p>
     <em><p>{{ listener.bio }}</p></em>
+    {% if current_user.username == listener.username %}
+        <a href="/listener/{{ listener.username }}/edit">[Edit Account]</a>
+    {% endif %}
     <hr>
 
     <h2>Followers:</h2>

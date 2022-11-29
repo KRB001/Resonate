@@ -291,6 +291,39 @@ def listener(name):
     else:
         return render_template("index.html", title="Home")
 
+
+@app.route('/listener/<name>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_listener(name):
+    listener = Listener.query.filter_by(username=name).first()
+    form = EditAccountForm(display_name=listener.display_name, bio=listener.bio)
+    if listener is not None and current_user.username == listener.username:
+        if form.validate_on_submit():
+            current_user.display_name = form.display_name.data
+            current_user.bio = form.bio.data
+            db.session.commit()
+            return redirect("/listener/" + listener.username)
+        return render_template('edit_account.html', title="Edit Account", form=form)
+    else:
+        return redirect('/index')
+
+
+@app.route('/artist/<name>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_artist(name):
+    artist = Artist.query.filter_by(username=name).first()
+    form = EditAccountForm(display_name=artist.display_name, bio=artist.bio)
+    if artist is not None and current_user.username == artist.username:
+        if form.validate_on_submit():
+            current_user.display_name = form.display_name.data
+            current_user.bio = form.bio.data
+            db.session.commit()
+            return redirect("/artist/" + artist.username)
+        return render_template('edit_account.html', title="Edit Account", form=form)
+    else:
+        return redirect('/index')
+
+
 @app.route('/post/<id>', methods=['GET', 'POST'])
 def post(id):
     form = CommentForm()
