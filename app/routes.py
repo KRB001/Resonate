@@ -13,8 +13,9 @@ import datetime
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     date = datetime.date.today()
-    if current_user.is_authenticated:
 
+    if current_user.is_authenticated:
+        form = PostForm()
         post_list = []
         for followed in current_user.followed:
             for current_post in followed.posts:
@@ -61,11 +62,11 @@ def index():
                 suggested_artists.extend(all_suggested_artists)
 
             return render_template('index.html', title="Home", user=current_user,
-                                   date=date, posts=post_list, suggested_artists=suggested_artists)
+                                   date=date, posts=post_list, suggested_artists=suggested_artists, form=form)
 
         else:
             return render_template('index.html', title="Home", user=current_user,
-                                   date=date, posts=post_list)
+                                   date=date, posts=post_list, form=form)
 
 
 

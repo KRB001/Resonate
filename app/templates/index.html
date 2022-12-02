@@ -10,7 +10,8 @@
         <b><p>Hi {{ user.display_name }}!</p></b>
         <p>Today's date is {{ date }}</p>
         <hr>
-
+        {{ wtf.quick_form(form) }}
+        <br>
         <div class="alert">
                 <em><h4>your feed</h4></em>
                 {% for post in posts %}
