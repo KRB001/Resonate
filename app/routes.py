@@ -1,5 +1,5 @@
 import random
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from app import app
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
@@ -479,8 +479,36 @@ def populate_db():
                    location="Island of Ithaca, Greece", bio="Bio Text Here")
     user8.set_password("password8")
 
+    user9 = Listener(username="user9", email="user9@resonate.net",
+                     display_name="Cool User #9", join_date=now, bio="Bio Text Here")
+    user9.set_password("password9")
+
+    user10 = Artist(username="user10", email="user10@resonate.net",
+                    display_name="Music Band III", join_date=now,
+                    location="San Jose, CA", bio="Bio Text Here")
+    user10.set_password("password10")
+
+    user11 = Listener(username="user11", email="user11@resonate.net",
+                     display_name="Richard", join_date=now, bio="Bio Text Here")
+    user11.set_password("password11")
+
+    user12 = Artist(username="user12", email="user12@resonate.net",
+                    display_name="Brick Eaters United", join_date=now,
+                    location="Chicago, IL", bio="Bio Text Here")
+    user12.set_password("password12")
+
+    user13 = Listener(username="user13", email="user13@resonate.net",
+                      display_name="Walnut", join_date=now, bio="Bio Text Here")
+    user13.set_password("password13")
+
+    user14 = Artist(username="user14", email="user14@resonate.net",
+                    display_name="555555555", join_date=now,
+                    location="Detroit, MI", bio="Bio Text Here")
+    user14.set_password("password14")
+
     db.session.add_all([user1, user2, user3, user4, user5, user6,
-                        user7, user8])
+                        user7, user8, user9, user10, user11, user12,
+                        user13, user14])
     db.session.commit()
 
     # declare artist genres
@@ -496,9 +524,19 @@ def populate_db():
     ag10 = ArtistGenre(artist_id=user8.id, genre_id=genre8.id)
     ag11 = ArtistGenre(artist_id=user8.id, genre_id=genre5.id)
     ag12 = ArtistGenre(artist_id=user8.id, genre_id=genre7.id)
+    ag13 = ArtistGenre(artist_id=user10.id, genre_id=genre10.id)
+    ag14 = ArtistGenre(artist_id=user10.id, genre_id=genre6.id)
+    ag15 = ArtistGenre(artist_id=user12.id, genre_id=genre1.id)
+    ag16 = ArtistGenre(artist_id=user12.id, genre_id=genre4.id)
+    ag17 = ArtistGenre(artist_id=user12.id, genre_id=genre5.id)
+    ag18 = ArtistGenre(artist_id=user14.id, genre_id=genre1.id)
+    ag19 = ArtistGenre(artist_id=user14.id, genre_id=genre7.id)
+    ag20 = ArtistGenre(artist_id=user14.id, genre_id=genre9.id)
 
     db.session.add_all([ag1, ag2, ag3, ag4, ag5, ag6, ag7,
-                        ag8, ag9, ag10, ag11, ag12])
+                        ag8, ag9, ag10, ag11, ag12, ag13,
+                        ag14, ag15, ag16, ag17, ag18, ag19,
+                        ag20])
     db.session.commit()
 
     # declare user frequent artists
@@ -510,8 +548,16 @@ def populate_db():
     atl6 = ArtistToListener(listener_id=user6.id, artist_id=user5.id, page_visit_count=120)
     atl7 = ArtistToListener(listener_id=user3.id, artist_id=user5.id, page_visit_count=50)
     atl8 = ArtistToListener(listener_id=user4.id, artist_id=user3.id, page_visit_count=200)
+    atl9 = ArtistToListener(listener_id=user6.id, artist_id=user12.id, page_visit_count=50)
+    atl10 = ArtistToListener(listener_id=user13.id, artist_id=user14.id, page_visit_count=200)
+    atl11 = ArtistToListener(listener_id=user3.id, artist_id=user10.id, page_visit_count=30)
+    atl12 = ArtistToListener(listener_id=user11.id, artist_id=user3.id, page_visit_count=100)
+    atl13 = ArtistToListener(listener_id=user11.id, artist_id=user5.id, page_visit_count=500)
+    atl14 = ArtistToListener(listener_id=user11.id, artist_id=user10.id, page_visit_count=150)
 
-    db.session.add_all([atl1, atl2, atl3, atl4, atl5, atl6, atl7, atl8])
+
+    db.session.add_all([atl1, atl2, atl3, atl4, atl5, atl6, atl7, atl8, atl9,
+                        atl10,atl11,atl12,atl13,atl14])
     db.session.commit()
 
     # declare user frequent genres
@@ -534,29 +580,29 @@ def populate_db():
 
     # declare posts
     post1 = Post(poster_id=user1.id,title="This is a cool post",
-                 text="I don't have too much to say but yea this is definitely"
+                 text="I don't have too much to say but yea this is definitely "
                       "one of the posts ever. Definitely.",
                  time_posted=now)
     post2 = Post(poster_id=user3.id, title="Guys I just made a post",
-                 text="I think you're reading it right now, but I might be"
-                      "entirely wrong. Might wanna check up on that at some"
+                 text="I think you're reading it right now, but I might be "
+                      "entirely wrong. Might wanna check up on that at some "
                       "point, but I can't tell you what to do or anything.",
                  time_posted=now)
-    post3 = Post(poster_id=user3.id, title="Stuff I forgot to say in my last post",
-                 text="Okay I'll be honest there wasn't actually anything I"
+    post3 = Post(poster_id=user3.id, title="Stuff I forgot to say in my last post ",
+                 text="Okay I'll be honest there wasn't actually anything I "
                       "forgot to say I just wanted to make another post.",
                  time_posted=now)
     post4 = Post(poster_id=user5.id, title="I'm running out of post titles",
-                 text="I've written like four of these things by now. That's like,"
+                 text="I've written like four of these things by now. That's like, "
                       "more than 3. Geez.",
                  time_posted=now)
     post5 = Post(poster_id=user6.id, title="This is the last post!",
-                 text="Finally, at long last, I've reached the end of my long"
-                      "posting journey. I shall post no more and soon I will"
+                 text="Finally, at long last, I've reached the end of my long "
+                      "posting journey. I shall post no more and soon I will "
                       "be at rest.",
                  time_posted=now)
     post6 = Post(poster_id=user6.id, title=":)",
-                 text="ok I lied about that being my last post",
+                 text="ok I lied about that being my last post ",
                  time_posted=now)
 
     db.session.add_all([post1, post2, post3, post4, post5, post6])
@@ -588,6 +634,25 @@ def populate_db():
     user5.follow(user4)
     user5.follow(user1)
     user6.follow(user2)
+    user7.follow(user13)
+    user7.follow(user10)
+    user7.follow(user4)
+    user7.follow(user11)
+    user8.follow(user9)
+    user9.follow(user10)
+    user9.follow(user1)
+    user9.follow(user4)
+    user10.follow(user2)
+    user10.follow(user14)
+    user10.follow(user7)
+    user10.follow(user4)
+    user10.follow(user6)
+    user12.follow(user5)
+    user12.follow(user11)
+    user13.follow(user6)
+    user14.follow(user5)
+    user14.follow(user9)
+    user14.follow(user7)
 
     db.session.commit()
 
@@ -596,6 +661,22 @@ def populate_db():
     user5.add_similar(user3)
     user4.add_similar(user3)
     user3.add_similar(user5)
+    user3.add_similar(user14)
+    user5.add_similar(user10)
+    user7.add_similar(user3)
+    user7.add_similar(user12)
+    user7.add_similar(user4)
+    user8.add_similar(user14)
+    user8.add_similar(user12)
+    user8.add_similar(user7)
+    user10.add_similar(user14)
+    user10.add_similar(user4)
+    user10.add_similar(user5)
+    user10.add_similar(user7)
+    user12.add_similar(user4)
+    user12.add_similar(user3)
+    user14.add_similar(user5)
+    user14.add_similar(user10)
 
     db.session.commit()
 
