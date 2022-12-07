@@ -1,4 +1,6 @@
 import random
+from operator import attrgetter
+
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from app import app
 from flask_login import login_user, logout_user, current_user, login_required
@@ -20,6 +22,19 @@ def index():
         for followed in current_user.followed:
             for current_post in followed.posts:
                 post_list.append(current_post)
+
+        for post in current_user.posts:
+            post_list.append(post)
+
+        post_list.sort(reverse=True, key=attrgetter('time_posted'))
+
+
+        if form.validate_on_submit():
+            post = Post(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now())
+            db.session.add(post)
+            db.session.commit()
+            post_list.insert(0, post)
+            flash('Your post is now live!')
 
         visited_genres = ListenerToGenre.query.filter_by(listener_id=current_user.id).order_by(desc('page_visit_count'))
         visited_genres_list = []
