@@ -255,13 +255,6 @@ def register_artist():
     return render_template('register_artist.html', title="Register", form=form)
 
 
-
-
-
-@app.route('/settings')
-def settings():
-    return "SETTINGS"
-
 @app.route('/artist/<name>')
 @login_required
 def artist(name):
@@ -420,6 +413,11 @@ def unfollow(name):
     db.session.commit()
     flash('You are no longer following {}'.format(user.display_name))
     return redirect('/' + user_type + '/' + user.username)
+
+@app.route('/submitrequest')
+@login_required
+def submit_request():
+    return "SUBMIT REQUEST"
 
 
 @app.route('/resetDB')
