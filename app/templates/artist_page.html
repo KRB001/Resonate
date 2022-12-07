@@ -11,16 +11,16 @@
     </h2>
     {% if current_user.username != artist.username %}
         {% if not current_user.is_following(artist) %}
-            <p>artist/{{ artist.username }} <a href="/follow/{{ artist.username }}">[Follow]</a></p>
+            <p>artist/{{ artist.username }} <a href="/follow/{{ artist.username }}">[Follow]</a> <a href="/send_message/{{ artist.username }}">[Send Message]</a></p>
         {% else %}
-            <p>artist/{{ artist.username }} <a href="/unfollow/{{ artist.username }}">[Unfollow]</a></p>
+            <p>artist/{{ artist.username }} <a href="/unfollow/{{ artist.username }}">[Unfollow]</a> <a href="/send_message/{{ artist.username }}">[Send Message]</a></p>
         {% endif %}
     {% endif %}
     <p>artist since {{ artist.join_date }}</p>
     <p>located in {{ artist.location }}</p>
     <em><p>{{ artist.bio }}</p></em>
     {% if current_user.username == artist.username %}
-        <a href="/artist/{{ artist.username }}/edit">[Edit Account]</a>
+        <a href="/artist/{{ artist.username }}/edit">[Edit Account]</a> <a href="/messages">[Direct Messages]</a>
     {% endif %}
     <hr>
 

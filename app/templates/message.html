@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+  {% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+<table class="table table-hover">
+        <tr>
+            <td>
+                 {% if message.author.type == 'listener' %}
+                <a href="{{ url_for('listener', name=message.author.username) }}">
+                    {% elif message.author.type == 'artist' %}
+                    <a href="{{ url_for('artist', name=message.author.username) }}">
+                        {% endif %}
+                    <img src="https://cdn.discordapp.com/attachments/1037756499654610975/1042212100082241646/Placeholder_PFP.png"
+                     width="45"
+                    height="45"/>
+                </a>
+            </td>
+            <td>
+                {% if message.author.type == "listener" %}
+                <a href="{{ url_for('listener', name=message.author.username) }}">
+                    {% elif message.author.type == "artist" %}
+                    <a href="{{ url_for('artist', name=message.author.username) }}">
+                        {% endif %}
+
+                    {{ message.author.display_name }}
+                </a>
+                says:
+                <br>
+                {{ message.text }}
+            <p> On {{ message.time_sent }} </p>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

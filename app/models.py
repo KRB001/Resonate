@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -31,6 +33,13 @@ class User(UserMixin, db.Model):
 
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
+
+    messages_sent = db.relationship('DirectMessage',
+                                    foreign_keys='DirectMessage.sender_id',
+                                    backref='author', lazy='dynamic')
+    messages_received = db.relationship('DirectMessage',
+                                        foreign_keys='DirectMessage.recipient_id',
+                                        backref='recipient', lazy='dynamic')
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -119,6 +128,18 @@ class Artist(User, db.Model):
 
     def __repr__(self):
         return '<Artist {}>'.format(self.username)
+
+
+class DirectMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    text = db.Column(db.String(1000))
+    time_sent = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<DirectMessage {}>'.format(self.name)
+
 
 class Genre(db.Model):
     id = db.Column(db.Integer, primary_key=True)

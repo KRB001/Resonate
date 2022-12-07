@@ -342,6 +342,30 @@ def edit_artist(name):
         return redirect('/index')
 
 
+@app.route('/send_message/<recipient>', methods=['GET', 'POST'])
+@login_required
+def send_message(recipient):
+    user = User.query.filter_by(username=recipient).first_or_404()
+    form = MessageForm()
+    if form.validate_on_submit():
+        msg = DirectMessage(author=current_user, recipient=user,
+                      text=form.message.data)
+        db.session.add(msg)
+        db.session.commit()
+        flash('Your message has been sent.')
+        if (user.type == 'listener'):
+            return redirect(url_for('listener', name=user.username))
+        elif (user.type == 'artist'):
+            return redirect(url_for('artist', name=user.username))
+    return render_template('send_message.html', title='Send Message', form=form, recipient=user)
+
+@app.route('/messages')
+@login_required
+def messages():
+    messages = current_user.messages_received.order_by(
+        DirectMessage.time_sent.desc())
+    return render_template('messages.html', messages=messages)
+
 @app.route('/post/<id>', methods=['GET', 'POST'])
 def post(id):
     form = CommentForm()

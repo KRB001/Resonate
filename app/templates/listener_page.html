@@ -5,15 +5,15 @@
     <h1>[{{ listener.display_name }}'s Page]</h1>
     {% if current_user.username != listener.username %}
         {% if not current_user.is_following(listener) %}
-            <p>artist/{{ listener.username }} <a href="/follow/{{ listener.username }}">[Follow]</a></p>
+            <p>listener/{{ listener.username }} <a href="/follow/{{ listener.username }}">[Follow]</a> <a href="/send_message/{{ listener.username }}">[Send Message]</a></p>
         {% else %}
-            <p>artist/{{ listener.username }} <a href="/unfollow/{{ listener.username }}">[Unfollow]</a></p>
+            <p>listener/{{ listener.username }} <a href="/unfollow/{{ listener.username }}">[Unfollow]</a> <a href="/send_message/{{ listener.username }}">[Send Message]</a></p>
         {% endif %}
     {% endif %}
     <p>listener since {{ listener.join_date }}</p>
     <em><p>{{ listener.bio }}</p></em>
     {% if current_user.username == listener.username %}
-        <a href="/listener/{{ listener.username }}/edit">[Edit Account]</a>
+        <a href="/listener/{{ listener.username }}/edit">[Edit Account]</a> <a href="/messages">[Direct Messages]</a>
     {% endif %}
     <hr>
 
