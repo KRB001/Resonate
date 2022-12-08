@@ -90,3 +90,9 @@ class EditAccountForm(FlaskForm):
     bio = TextAreaField('User Bio')
     submit = SubmitField('Submit')
 
+
+class RequestForm(FlaskForm):
+    subject = StringField('Subject', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    category = SelectField('Category', validators=[DataRequired()])
+    submit = SubmitField('Submit')

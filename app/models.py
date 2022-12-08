@@ -28,6 +28,7 @@ class User(UserMixin, db.Model):
 
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    requests = db.relationship('Request', backref='requester', lazy='dynamic')
 
     frequent_artists = db.relationship('ArtistToListener', backref='listener', lazy='dynamic')
     frequent_genres = db.relationship('ListenerToGenre', backref='listener', lazy='dynamic')
@@ -213,4 +214,12 @@ class SongToAlbum(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     song_id = db.Column(db.Integer, db.ForeignKey('song.id'), nullable=False)
     album_id = db.Column(db.Integer, db.ForeignKey('album.id'), nullable=False)
+
+
+class Request(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+    subject = db.Column(db.String(144), index=True, unique=True)
+    description = db.Column(db.String(2056), index=True, unique=True)
+    category = db.Column(db.String(64), index=True, unique=True)
 

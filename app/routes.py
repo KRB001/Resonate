@@ -414,11 +414,21 @@ def unfollow(name):
     flash('You are no longer following {}'.format(user.display_name))
     return redirect('/' + user_type + '/' + user.username)
 
-@app.route('/submitrequest')
+
+@app.route('/submitrequest', methods=['GET', 'POST'])
 @login_required
 def submit_request():
-    return "SUBMIT REQUEST"
+    form = RequestForm()
+    form.category.choices = ['General', 'Band Member (in-person)', 'Band Member (remote)',
+                           'Producer', 'Vocalist', 'Instrumentalist', 'Venue',
+                           'Transportation', 'Tecnical Support', 'Other Support',
+                           'Collaborator', 'Promotion/Marketing', 'Other']
 
+    if form.validate_on_submit():
+        flash('New request submitted!')
+        return redirect('/index')
+
+    return render_template('submit_request.html', title='Submit a Request', form=form)
 
 @app.route('/resetDB')
 def resetDB():
