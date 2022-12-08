@@ -425,6 +425,10 @@ def submit_request():
                            'Collaborator', 'Promotion/Marketing', 'Other']
 
     if form.validate_on_submit():
+        request = Request(user_id=current_user.id,subject=form.subject.data,description=form.description.data,
+                          category=form.category.data)
+        db.session.add(request)
+        db.session.commit()
         flash('New request submitted!')
         return redirect('/index')
 

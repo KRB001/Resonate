@@ -218,7 +218,7 @@ class SongToAlbum(db.Model):
 
 class Request(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject = db.Column(db.String(144), index=True, unique=True)
     description = db.Column(db.String(2056), index=True, unique=True)
     category = db.Column(db.String(64), index=True, unique=True)
