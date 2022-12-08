@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>USER REQUESTS BOARD</h1>
+    <p>Here's what people are looking for</p>
+    <hr>
+    <em><h4>your requests</h4></em>
+        {% if user_requests %}
+            <div class="list-group">
+            {% for request in user_requests %}
+                <a href="/request/{{ request.id }}" class="list-group-item list-group-item-action">
+                    <h4>{{ request.subject }}</h4>
+                    <p>
+                        {{ request.description }}
+                    </p>
+                    <b><p>Category: {{ request.category }}</p></b>
+                    <em><p>{{ request.time_posted }}</p></em>
+                </a>
+            {% endfor %}
+             </div>
+        {% else %}
+            <p>You haven't submitted any requests.</p>
+            <a href="/submitrequest">Submit One</a>
+        {% endif %}
+    <hr>
+    <em><h4>all requests</h4></em>
+        <div class="list-group">
+            {% for request in requests %}
+                {% if request not in user_requests %}
+                <a href="/request/{{ request.id }}" class="list-group-item list-group-item-action">
+                    <h4>{{ request.subject }}</h4>
+                    <p>
+                        {{ request.description }}
+                    </p>
+                    <b><p>Category: {{ request.category }}</p></b>
+                        <em><p>
+                            Posted by {{ request.requester.display_name }}
+                        </p></em>
+                    <em><p>{{ request.time_posted }}</p></em>
+                </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+{% endblock %}

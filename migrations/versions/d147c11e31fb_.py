@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 80edaec13f1b
+Revision ID: d147c11e31fb
 Revises: 
-Create Date: 2022-11-28 10:47:40.021331
+Create Date: 2022-12-08 10:53:30.889754
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '80edaec13f1b'
+revision = 'd147c11e31fb'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -97,6 +97,18 @@ def upgrade():
     op.create_index(op.f('ix_post_text'), 'post', ['text'], unique=False)
     op.create_index(op.f('ix_post_time_posted'), 'post', ['time_posted'], unique=False)
     op.create_index(op.f('ix_post_title'), 'post', ['title'], unique=False)
+    op.create_table('request',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('subject', sa.String(length=144), nullable=True),
+    sa.Column('description', sa.String(length=2056), nullable=True),
+    sa.Column('category', sa.String(length=64), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_request_category'), 'request', ['category'], unique=True)
+    op.create_index(op.f('ix_request_description'), 'request', ['description'], unique=True)
+    op.create_index(op.f('ix_request_subject'), 'request', ['subject'], unique=True)
     op.create_table('song_to_album',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('song_id', sa.Integer(), nullable=False),
@@ -170,6 +182,10 @@ def downgrade():
     op.drop_table('artist_to_album')
     op.drop_table('artist_genre')
     op.drop_table('song_to_album')
+    op.drop_index(op.f('ix_request_subject'), table_name='request')
+    op.drop_index(op.f('ix_request_description'), table_name='request')
+    op.drop_index(op.f('ix_request_category'), table_name='request')
+    op.drop_table('request')
     op.drop_index(op.f('ix_post_title'), table_name='post')
     op.drop_index(op.f('ix_post_time_posted'), table_name='post')
     op.drop_index(op.f('ix_post_text'), table_name='post')

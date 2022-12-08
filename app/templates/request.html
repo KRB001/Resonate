@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+    <h2>{{ request.subject }}</h2>
+    {% if request.requester.type == 'listener' %}
+        <em><h4>
+            Submitted by <a href="/listener/{{ request.requester.username }}">{{ request.requester.display_name }}</a>
+        </h4></em>
+    {% else %}
+        <em><h4>
+            Submitted by <a href="/artist/{{ request.requester.username }}">{{ request.requester.display_name }}</a>
+        </h4></em>
+    {% endif %}
+
+    <p>{{ request.time_posted }}</p>
+
+    {% if current_user.username == request.requester.username %}
+
+        <a href="/removerequest/{{ request.id }}">[Remove]</a></b>
+
+    {% endif %}
+
+    <hr>
+
+    <p>{{ request.description }}</p>
+    <br>
+    <b>Category: {{ request.category }}</b>
+
+{% endblock %}

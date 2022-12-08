@@ -54,5 +54,26 @@
         <br>
     {% endfor %}
 
+    <hr>
+
+        <h2>Requests:</h2>
+
+    {% if requests.first() != None %}
+            <div class="list-group">
+            {% for request in requests %}
+                <a href="/request/{{ request.id }}" class="list-group-item list-group-item-action">
+                    <h4>{{ request.subject }}</h4>
+                    <p>
+                        {{ request.description }}
+                    </p>
+                    <b><p>Category: {{ request.category }}</p></b>
+                    <em><p>{{ request.time_posted }}</p></em>
+                </a>
+            {% endfor %}
+             </div>
+    {% else %}
+            <p>This user hasn't submitted any requests.</p>
+    {% endif %}
+
 
 {% endblock %}

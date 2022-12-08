@@ -28,7 +28,6 @@ def index():
 
         post_list.sort(reverse=True, key=attrgetter('time_posted'))
 
-
         if form.validate_on_submit():
             post = Post(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now())
             db.session.add(post)
@@ -116,7 +115,6 @@ def discover():
             artists = artist_search.similar
             return render_template('discover_results_similar.html', title="Discover", artists=artists)
 
-
     return render_template('discover.html', title="Discover", form=form)
 
 
@@ -162,16 +160,12 @@ def search(query):
             for post in Post.query.filter(Post.text.contains(query)):
                 if not (post in found_posts):
                     found_posts.append(post)
-        return render_template('search.html',title='Search', users=found_users, posts=found_posts,
-                                       form=form, query=query)
+        return render_template('search.html', title='Search', users=found_users, posts=found_posts,
+                               form=form, query=query)
 
     elif request.method == 'GET':
         form.search_term.data = query
     return render_template('search.html', title='Search', users=found_users, posts=found_posts, form=form, query=query)
-
-
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -191,14 +185,17 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
+
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
+
 @app.route('/register')
 def register():
     return render_template('register.html')
+
 
 @app.route('/register_listener', methods=['GET', 'POST'])
 def register_listener():
@@ -207,7 +204,8 @@ def register_listener():
         return redirect(url_for('index'))
     form = ListenerRegistrationForm()
     if form.validate_on_submit():
-        user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data, join_date=now,
+        user = Listener(username=form.username.data, email=form.email.data, display_name=form.username.data,
+                        join_date=now,
                         bio=form.bio.data)
         user.set_password(form.password.data)
         db.session.add(user)
@@ -228,10 +226,12 @@ def register_artist():
     form = ArtistRegistrationForm()
 
     form.genres.choices = [(g.id, g.name) for g in Genre.query.order_by('name')]
-    form.similar_artists.choices = [(a.id, a.display_name) for a in User.query.filter_by(type='artist').order_by('display_name')]
+    form.similar_artists.choices = [(a.id, a.display_name) for a in
+                                    User.query.filter_by(type='artist').order_by('display_name')]
 
     if form.validate_on_submit():
-        artist = Artist(username=form.username.data, email=form.email.data, display_name=form.display_name.data, location=form.location.data, join_date=now,
+        artist = Artist(username=form.username.data, email=form.email.data, display_name=form.display_name.data,
+                        location=form.location.data, join_date=now,
                         bio=form.bio.data)
         artist.set_password(form.password.data)
         db.session.add(artist)
@@ -255,13 +255,6 @@ def register_artist():
     return render_template('register_artist.html', title="Register", form=form)
 
 
-
-
-
-@app.route('/settings')
-def settings():
-    return "SETTINGS"
-
 @app.route('/artist/<name>')
 @login_required
 def artist(name):
@@ -271,10 +264,12 @@ def artist(name):
         followed = artist.followed
         display_name = artist.display_name
         genres = artist.genres
+        requests = artist.requests
 
         # tracking user's frequent genres via listener_to_genre
         for genre in genres:
-            listener_genre = ListenerToGenre.query.filter_by(genre_id=genre.genre.id, listener_id=current_user.id).first()
+            listener_genre = ListenerToGenre.query.filter_by(genre_id=genre.genre.id,
+                                                             listener_id=current_user.id).first()
             if listener_genre is not None:
 
                 listener_genre.page_visit_count += 1
@@ -290,7 +285,7 @@ def artist(name):
         return render_template('artist_page.html',
                                title="{}'s Page".format(display_name),
                                artist=artist, followers=followers, followed=followed,
-                               genres=genres)
+                               genres=genres, requests=requests)
     else:
         return render_template("index.html", title="Home")
 
@@ -303,9 +298,11 @@ def listener(name):
         followers = listener.followers
         followed = listener.followed
         display_name = listener.display_name
+        requests = listener.requests
         return render_template('listener_page.html',
                                title="{}'s Page".format(display_name),
-                               listener=listener, followers=followers, followed=followed)
+                               listener=listener, followers=followers, followed=followed,
+                               requests=requests)
     else:
         return render_template("index.html", title="Home")
 
@@ -374,18 +371,21 @@ def post(id):
     comments = Comment.query.filter_by(post_id=id).order_by(desc('time_posted'))
 
     if form.validate_on_submit():
-        comment = Comment(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now(), post_id=post.id)
+        comment = Comment(text=form.post.data, poster_id=current_user.id, time_posted=datetime.datetime.now(),
+                          post_id=post.id)
         db.session.add(comment)
         db.session.commit()
         flash('Your comment has been posted!')
-        return redirect(url_for('post', id = post.id, post=post, comments=comments))
+        return redirect(url_for('post', id=post.id, post=post, comments=comments))
     return render_template('post.html', title=post.text, post=post, comments=comments, form=form)
+
 
 @app.route('/comment/<id>')
 def comment(id):
     comment = Comment.query.filter_by(id=int(id)).first_or_404()
     original_post = Post.query.filter_by(id=comment.post_id).first()
     return render_template('comment.html', title=comment.text, comment=comment, original_post=original_post)
+
 
 @app.route('/posts', methods=['GET', 'POST'])
 @login_required
@@ -400,6 +400,7 @@ def posts():
         flash('Your post is now live!')
         return render_template('posts.html', title="Posts", posts=post_list, form=form)
     return render_template('posts.html', title="Posts", posts=post_list, form=form)
+
 
 @app.route('/follow/<name>')
 @login_required
@@ -422,6 +423,7 @@ def follow(name):
     db.session.commit()
     flash('You are now following {}!'.format(user.display_name))
     return redirect('/' + user_type + '/' + user.username)
+
 
 @app.route('/unfollow/<name>')
 @login_required
@@ -446,16 +448,77 @@ def unfollow(name):
     return redirect('/' + user_type + '/' + user.username)
 
 
+@app.route('/submitrequest', methods=['GET', 'POST'])
+@login_required
+def submit_request():
+    form = RequestForm()
+    form.category.choices = ['General', 'Band Member (in-person)', 'Band Member (remote)',
+                             'Producer', 'Vocalist', 'Instrumentalist', 'Venue',
+                             'Transportation', 'Technical Support', 'Other Support',
+                             'Collaborator', 'Promotion/Marketing', 'Other']
+
+    if form.validate_on_submit():
+        request = Request(user_id=current_user.id, subject=form.subject.data, description=form.description.data,
+                          category=form.category.data, time_posted=datetime.datetime.now())
+        db.session.add(request)
+        db.session.commit()
+        flash('New request submitted!')
+        return redirect('/index')
+
+    return render_template('submit_request.html', title='Submit a Request', form=form)
+
+
+@app.route('/requests', methods=['GET', 'POST'])
+@login_required
+def requests():
+
+    user_requests = current_user.requests.order_by(desc('time_posted'))
+    requests = Request.query.order_by(desc('time_posted'))
+
+    if user_requests.first() is not None:
+        return render_template('requests.html', title='Requests Board',user_requests=user_requests,
+                               requests=requests)
+    else:
+        return render_template('requests.html', title='Requests Board',requests=requests)
+
+
+@app.route('/request/<id>')
+@login_required
+def request(id):
+
+    request = Request.query.filter_by(id=id).first()
+
+    if request is not None:
+        return render_template('request.html', title=request.subject, request=request)
+    else:
+        return render_template('404.html')
+
+
+@app.route('/removerequest/<id>')
+@login_required
+def remove_request(id):
+
+    request = Request.query.filter_by(id=id).first()
+
+    if request is not None and request.requester.username == current_user.username:
+
+        db.session.delete(request)
+        db.session.commit()
+        flash('Request successfully removed!')
+        return redirect('/requests')
+
+    else:
+        return redirect('/requests')
+
 @app.route('/resetDB')
 def resetDB():
-
     reset_db()
 
     return "DB RESET"
 
+
 @app.route('/populate_db')
 def populate_db():
-
     # reset the DB
     reset_db()
 
@@ -529,7 +592,7 @@ def populate_db():
     user10.set_password("password10")
 
     user11 = Listener(username="user11", email="user11@resonate.net",
-                     display_name="Richard", join_date=now, bio="Bio Text Here")
+                      display_name="Richard", join_date=now, bio="Bio Text Here")
     user11.set_password("password11")
 
     user12 = Artist(username="user12", email="user12@resonate.net",
@@ -580,7 +643,7 @@ def populate_db():
     db.session.commit()
 
     # declare user frequent artists
-    atl1 = ArtistToListener(listener_id=user1.id,artist_id=user3.id,page_visit_count=50)
+    atl1 = ArtistToListener(listener_id=user1.id, artist_id=user3.id, page_visit_count=50)
     atl2 = ArtistToListener(listener_id=user1.id, artist_id=user4.id, page_visit_count=100)
     atl3 = ArtistToListener(listener_id=user1.id, artist_id=user5.id, page_visit_count=150)
     atl4 = ArtistToListener(listener_id=user2.id, artist_id=user4.id, page_visit_count=500)
@@ -595,9 +658,8 @@ def populate_db():
     atl13 = ArtistToListener(listener_id=user11.id, artist_id=user5.id, page_visit_count=500)
     atl14 = ArtistToListener(listener_id=user11.id, artist_id=user10.id, page_visit_count=150)
 
-
     db.session.add_all([atl1, atl2, atl3, atl4, atl5, atl6, atl7, atl8, atl9,
-                        atl10,atl11,atl12,atl13,atl14])
+                        atl10, atl11, atl12, atl13, atl14])
     db.session.commit()
 
     # declare user frequent genres
@@ -619,7 +681,7 @@ def populate_db():
     db.session.commit()
 
     # declare posts
-    post1 = Post(poster_id=user1.id,title="This is a cool post",
+    post1 = Post(poster_id=user1.id, title="This is a cool post",
                  text="I don't have too much to say but yea this is definitely "
                       "one of the posts ever. Definitely.",
                  time_posted=now)

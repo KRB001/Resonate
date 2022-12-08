@@ -95,3 +95,10 @@ class MessageForm(FlaskForm):
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
+class RequestForm(FlaskForm):
+    subject = StringField('Subject', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    category = SelectField('Category', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
