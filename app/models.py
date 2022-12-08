@@ -222,4 +222,5 @@ class Request(db.Model):
     subject = db.Column(db.String(144), index=True, unique=True)
     description = db.Column(db.String(2056), index=True, unique=True)
     category = db.Column(db.String(64), index=True, unique=True)
+    time_posted = db.Column(db.DateTime, index=True)
 
