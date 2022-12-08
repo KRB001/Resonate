@@ -27,4 +27,10 @@
     <br>
     <b>Category: {{ request.category }}</b>
 
+    {% if current_user.username != request.requester.username %}
+
+        <b><h2><a href="/send_message/{{ request.requester.username }}">[Reply]</a></h2></b>
+
+    {% endif %}
+
 {% endblock %}

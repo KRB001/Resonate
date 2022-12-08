@@ -484,7 +484,7 @@ def requests():
 
 @app.route('/request/<id>')
 @login_required
-def request(id):
+def request_page(id):
 
     request = Request.query.filter_by(id=id).first()
 
